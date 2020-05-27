@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<% include ./partial/top.ejs %>
+<link rel="stylesheet" href="./stylesheets/tree.css">
+<body>
+	<div id='container' class='row p-0 m-0 pt-5'>
+		<div class='left col-3'>
+			<div class='plant-title plant-title-panel d-flex align-items-center'>
+        <a href="./home" style="float: left; margin: 5%"><i class="fas fa-angle-left text-white"></i></a>
+				<h3 class='text-white m-0'><%= tree.name %></h3>
+			</div>
+			<div class='plant-action'>
+        <div class='action-title mb-3'>
+          <h4 class='text-success'>Schedule Watering</h4>
+        </div>
+				<form class="" method="post" onsubmit='<%= 'tree_schedule_water(event, "' + tree.name + '")' %>'>
+					<select class="custom-select freq-select">
+						<option selected value="1">Everyday</option>
+						<option value="2">Every 2 Days</option>
+						<option value="4">Every 4 Days</option>
+						<option value="7">Every Weeks</option>
+					</select>
+					<div class="time-watering mt-3">
+						<input type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour">
+						<input type="number" name="" min="0" max="60" value="" class='p-2 mm' placeholder="minute">
+					</div>
+					<div class="time-watering mt-3">
+						<input type="number" name="" min="0" max="24" value="" class='p-2 ml' placeholder="water level">
+						<input type="text" name="" value="ml" class='p-2' readonly>
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="" class="btn btn-success filter-button"><i class="far fa-calendar-check"></i></button>
+					</div>
+				</form>
+        <div class='action-title my-3'>
+          <h4 class='text-success'>Manual Watering</h4>
+        </div>
+				<button onClick="panel_toggle()" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center'>Manual<br/>Watering</button>
+			</div>
+		</div>
+
+		<div class='right col-6'>
+			<div class='overall-title mx-2'>
+				<a class='text-success get-fully-report' href='<%= "/report/" + tree.name %>'>Report</a>
+			</div>
+			<div class='overall-element'>
+				<ul class="list-group list-overall">
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Temperature</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-danger'>23&#8451;</h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Soil Moisture</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-dark'>0.4</h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Air Humidity</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-info'>35%</h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Were Tree Watered Today?</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-warning'>NO</h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-primary'>15:00 yesterday</h5>
+				  </li>
+				</ul>
+			</div>
+		</div>
+
+		<div class='app-name' align='center'>
+			awari
+		</div>
+
+		<div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+			<div class="card">
+			  <form class="card-body filter-form" method='post' onsubmit='<%= 'tree_manual_water(event, "' + tree.name + '")' %>'>
+					<div class="w-100 d-flex justify-content-between align-items-center mb-3">
+						<h3 class='m-0 text-success'>Manual Water</h3>
+						<button onClick="panel_toggle()" type="button" name="CloseFilterPanel" class="btn btn-warning close-filter"><i class="far fa-times-circle"></i></button>
+					</div>
+					<span class='text-success'>Flow</span>
+					<div class="time-watering my-3">
+						<input type="number" name="" min="0" max="100" value="" class='p-2 hh' placeholder="speed">
+						<input type="text" name="" value="ml/s" class='p-2' readonly>
+					</div>
+					<span class='text-success'>Sensor Region</span>
+					<div class="time-watering my-3">
+						<input type="text" name="" value="" class='p-2 mm w-100 region' placeholder="sensor name">
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button"><i class="fas fas fa-tint text-white"></i></button>
+					</div>
+			  </form>
+			</div>
+			<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
+		</div>
+	</div>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="/javascripts/main.js" charset="utf-8"></script>
+</body>
+</html>
