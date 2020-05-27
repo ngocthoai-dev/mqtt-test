@@ -47,23 +47,23 @@
 				<ul class="list-group list-overall">
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Temperature</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-danger'>23&#8451;</h5>
+				  	<h5 class='value m-0 p-0 col-4 text-danger'><%= tree.temperature %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Soil Moisture</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-dark'>0.4</h5>
+				  	<h5 class='value m-0 p-0 col-4 text-dark'><%= tree.moisture %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Air Humidity</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-info'>35%</h5>
+				  	<h5 class='value m-0 p-0 col-4 text-info'><%= tree.humidity %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Were Tree Watered Today?</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-warning'>NO</h5>
+				  	<h5 class='value m-0 p-0 col-4 text-warning'><%= tree.isWaterToday %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-primary'>15:00 yesterday</h5>
+				  	<h5 class='value m-0 p-0 col-4 text-primary'><%= tree.lastWater.split('T')[0] %><br/><%= tree.lastWater.split('T')[1] %></h5>
 				  </li>
 				</ul>
 			</div>
@@ -96,6 +96,11 @@
 			</div>
 			<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
 		</div>
+	</div>
+
+	<div class="panel-option fixed-top">
+	  <a href='/home' style='font-size: 30px;'><i class="fas fa-power-off"></i></a>
+	  <a href='/home' style='font-size: 30px;'><i class="fas fa-arrow-circle-left"></i></a>
 	</div>
 
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
