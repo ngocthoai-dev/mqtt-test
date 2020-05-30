@@ -36,7 +36,6 @@ mqttClient.on('connect', function () {
 let router = express.Router();
 
 router.get(['/', '/home'], function(req, res) {
-  console.log(db);
   db.collection('tree').find({}).toArray(function(err, treeLst){
 
     if(err) throw err;
@@ -80,9 +79,10 @@ router.post('/operation/filterTreeList', function(req, res, next) {
 
   db.collection('tree').find({
     name: { "$regex": req.body.data.TreeName, "$options": "i" },
-    temperature: { "$gte": parseInt(temperatureMinValue), "$lte": parseInt(temperatureMaxValue) },
-    moisture: { "$gte": parseInt(moistureMinValue), "$lte": parseInt(moistureMaxValue) },
-    humidity: { "$gte": parseInt(humidityMinValue), "$lte": parseInt(humidityMaxValue) },
+    data: { $elemMatch : {
+      temperature: { "$gte": parseInt(temperatureMinValue), "$lte": parseInt(temperatureMaxValue) },
+      moisture: { "$gte": parseInt(moistureMinValue), "$lte": parseInt(moistureMaxValue) },
+      humidity: { "$gte": parseInt(humidityMinValue), "$lte": parseInt(humidityMaxValue) } } },
   }).toArray(function(err, treeLst){
     if(err) throw err;
 
@@ -95,6 +95,7 @@ router.post('/operation/filterTreeList', function(req, res, next) {
   });
 });
 
+// get tree page submit
 router.post('/:treeName', function (req, res) {
   console.log(req.url);
   let checkType = req.body.data.type;
@@ -109,6 +110,7 @@ router.post('/:treeName', function (req, res) {
   }
 });
 
+// report to tree name
 router.get('/report/:treeName', function (req, res){
   console.log('get report:' + req.url);
   let now = new Date();
@@ -154,9 +156,26 @@ router.get('/report/:treeName', function (req, res){
   });
 });
 
+// render tree page
 router.get('/:treeName', function (req, res) {
   console.log(req.params.treeName);
-  res.render('../views/tree', {tree: {name: req.params.treeName}});
+  db.collection('tree').find({
+    name: req.params.treeName,
+  }).toArray(function(err, result){
+    if(err) throw err;
+
+    let temp=0, mois=0, humi=0, isWaterToday=false, lastWater=new Date('01-01-2020');
+
+    result.forEach((item, i) => {
+      temp = item.data[0].temperature;
+      mois = item.data[0].moisture;
+      humi = item.data[0].humidity;
+      isWaterToday = (new Date(new Date().toISOString().split('T')[0]) == new Date(item.lastwater.toISOString().split('T')[0])) ? "YES" : "NO";
+      lastWater = item.lastwater.getHours() + ":" + item.lastwater.getMinutes() + "T" + item.lastwater.getDate() + '/' + item.lastwater.getMonth() + '/' + item.lastwater.getFullYear();
+    });
+
+    res.render('../views/tree', { tree: { name: req.params.treeName, temperature: temp, moisture: mois, humidity: humi, isWaterToday: isWaterToday, lastWater: lastWater } });
+  });
 });
 
 module.exports = { router, initDbConection };

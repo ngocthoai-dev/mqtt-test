@@ -61,3 +61,12 @@
 .right .overall-element {
   height: 80%;
 }
+
+.right .overall-title a {
+  font-size: 30px;
+  text-decoration: none !important;
+}
+
+.right .overall-title a:hover {
+
+}
