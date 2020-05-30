@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
+    <title>AWARI</title>
+</head>
+<body>
+    <div class="middle">
+        <a class="awari" href="index.html">
+            <span class="t">a</span>
+            <span class="e">w</span>
+            <span class="e">a</span>
+            <span class="t">r</span>
+            <span class="t">i</span>
+        </a>
+    </div>
+    <div class="container">
+        <div class="plantt">
+            <img src="plant.svg" alt="plant" class="plant">
+        </div>
+        <div class="login-container">
+            <form action="index.html">
+                <img class="avatar" src="avatar.svg" alt="avatar">
+                <h2>Welcome</h2>
+                <div class="input-div one">
+                    <div class="i">
+                        <i class=" fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h5>Username</h5>
+                        <input type="text" class="input"> 
+                    </div>
+                </div>
+                <div class="input-div two">
+                    <div class="i">
+                        <i class=" fas fa-lock"></i>
+                    </div>
+                    <div>
+                        <h5>Password</h5>
+                        <input type="password" class="input" id ="myinput"> 
+                    </div>
+                    <span class="eye" onclick="visible()">
+                        <i id= "hide1" class=" fas fa-eye"></i>
+                        <i id= "hide2" class=" fas fa-eye-slash"></i>
+                    </span>
+                </div>
+                <div class="goback-signup">
+                    <div class="go-back">
+                        <a href="index.html" >go back</a>
+                        <style>
+                            .go-back a{
+                                display: none;
+                            }
+                        </style>
+                    </div>
+                    <div class="sign-up">
+                        <a href="register.html">sign up?</a>
+                    </div>
+                </div>
+                <input type="submit" class="btn" value="login">
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+body {
+    line-height:1;
+}
+
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section {
+    display:block;
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+/* change colours to suit your needs */
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+/* change colours to suit your needs */
+mark {
+    background-color:#ff9;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+/* change border colour to suit your needs */
+hr {
+    display:block;
+    height:1px;
+    border:0;  
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+
+
+/*MY CODE*/
+*{
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Poppins', sans-serif;
+    background-repeat: no-repeat;
+    background-image: url('wave.png');
+    background-position: fixed;
+    background-size: 1000px;
+}
+
+.middle{
+    font-size: 50px;
+    position: fixed;
+    text-align: center;
+    text-transform: uppercase;
+    top: 0;
+    right: 0;
+    left: 0;
+    background:transparent;
+    padding: 35px;
+    width: 100%;
+    height: 100px;
+    animation: backInDown;
+    animation-duration: 1.5s;
+}
+
+a{
+    text-decoration: none;
+    overflow: hidden;
+    position: relative;
+}
+
+span{
+    transition: .2s linear;
+    line-height: 50px;
+    
+}
+
+.awari:hover {
+    font-size: 55px;
+}
+
+a .t{
+    color: #333;
+}
+
+a .e{
+    color: #38d39f;
+}
+
+
+.container{
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20rem;
+    padding: 0 2rem;
+}
+
+.plantt{
+    padding-top: 280px;
+
+}
+
+.plant{
+    width: 500px;
+    height: 380px;
+    transition: .2s linear;
+    animation: backInLeft;
+    animation-duration: 1.5s;
+}
+
+.plant:hover{
+    transform: scale(1.1);
+}
+
+.login-container{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.register-container{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+form{
+    width: 400px;
+    animation: backInRight;
+    animation-duration: 1.5s;
+}
+
+.avatar {
+    width: 100px;
+}
+
+form h2{
+    font-size: 2.9rem;
+    text-transform: uppercase;
+    margin: 15px 0;
+    color: #333;
+}
+
+.input-div{
+    position: relative;
+    display: grid;
+    grid-template-columns: 7% 93%;
+    margin: 25px 0;
+    padding: 5px 0;
+    border-bottom: 2px solid #d9d9d9;
+}
+
+.input-div:after, .input-div:before{
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background-color: #38d39f;
+    transition: .3s;
+}
+
+.input-div:after{
+    right: 50%;
+}
+
+.input-div:before{
+    left: 50%;
+}
+
+.input-div.focus .i i{
+    color: #38d39f;
+}
+
+.input-div.focus:after, .input-div.focus:before{
+    width: 50%;
+}
+
+.input-div.focus div h5{
+    top: -5px;
+    font-size: 15px;
+}
+
+.input-div.one{
+    margin-top: 0;
+}
+
+.input-div.two{
+    margin-bottom: 4px;
+    grid-template-columns: 7% 86% 7%;
+}
+
+.i{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.i i{
+    color: #d9d9d9;
+    transition: .3s;
+}
+
+.eye {
+    color: #d9d9d9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s linear;
+}
+
+.eye:hover {
+    transform: scale(1.1);
+}
+
+#hide1{
+    display: none;
+}
+
+.input-div > div{
+    position: relative;
+    height: 45px;
+}
+
+.input-div > div h5{
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 18px;
+    transition: .3s;
+}
+
+.input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border: none;
+    outline: none;
+    background: none;
+    padding: 0.5rem 0.7rem;
+    font-size: 1.2rem;
+    color: #555;
+    font-family: 'Poppins', sans-serif;
+}
+
+.goback-signup{
+    display: grid;
+    grid-template-columns: 50% 50%;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif;
+    transition: .3s;
+    outline: none;
+    border: none;
+    padding-top: 10px;
+}
+
+.goback-signup a{
+    color: #333;
+    
+}
+
+.go-back{
+    text-align: left;
+}
+
+.sign-up{
+    text-align: right;
+}
+
+a:hover  {
+    color: #38d39f;
+}
+
+.btn{
+    display: block;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    outline: none;
+    border: none;
+    background-image: linear-gradient(to right, #32be8f, #38d39f, #32be8f);
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    background-size: 200%;
+    transition: .5s;
+}
+
+.btn:hover{
+    background-position: right;
+}
