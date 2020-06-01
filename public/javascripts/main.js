@@ -18,11 +18,12 @@ const postTreeFilter = (data)=>
   axios.post('/operation/filterTreeList', {data})
   .then((resp)=>resp.data);;;
 
+// index
 function createTreeListElement(treeName){
   let liTag = document.createElement('li');
   liTag.className = 'list-group-item border-0 p-1';
   let aTag = document.createElement('a');
-  aTag.href = '/' + treeName;
+  aTag.href = '/tree/' + treeName;
   let buttonTag = document.createElement('button');
   buttonTag.className = 'btn btn-success tree-elems w-100';
   buttonTag.type = 'button';
@@ -55,8 +56,9 @@ function filter_submit(evt){
   panel_toggle();
 }
 
+// tree
 const postTreeWater = (data, treeName)=>
-  axios.post(treeName, {data: data})
+  axios.post("/tree/" + treeName, {data: data})
   .then((resp)=>resp.data);
 
 function tree_schedule_water(evt, treeName){
@@ -87,11 +89,22 @@ function tree_manual_water(evt, treeName){
   panel_toggle();
 }
 
-function getFullyReport(treeName){
-  axios.post('/report/' + treeName, { data: treeName }).then((resp)=>{
-    console.log(resp);
-  }).catch(error=>{
-    console.log(error.response);
+// report/tree
+function getFullyReport(evt, treeName){
+  evt.preventDefault();
+  axios.post('/generate-report', { tree: { name: treeName } }).then((res)=>{
+    // console.log(res);
+    axios.get('/fetch-report/' + treeName, { responseType: 'blob' }).then((res)=>{
+      // console.log(res);
+      const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
+      // console.log(pdfBlob);
+      saveAs(pdfBlob, 'Report_' + treeName + '.pdf');
+    }).catch(error=>{
+      console.log(error.response);
+    });
   });
+}
 
+function addSensor(evt){
+  evt.preventDefault();
 }

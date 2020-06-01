@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
-<% include ./partial/top.ejs %>
+<head>
+	<% include ./partial/top.ejs %>
+	<link rel="stylesheet" href="./stylesheets/style.css">
+</head>
 <body>
 	<div id='container' class='row p-0 m-0 pt-5'>
 		<div class='left col-3'>
@@ -13,7 +16,7 @@
 					<ul class="list-group list-tree">
 						<% data.forEach((treeName)=>{ %>
 							<li class='list-group-item border-0 p-1'>
-								<a href=<%= treeName %>><button type="button" class="btn btn-success tree-elems w-100"><%= treeName %></button></a>
+								<a href=<%= '/tree/' + treeName %>><button type="button" class="btn btn-success tree-elems w-100"><%= treeName %></button></a>
 							</li>
 						<% }) %>
 					</ul>
@@ -35,6 +38,7 @@
 				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-primary'>15:00 yesterday</h5>
 				  </li>
+			  	<a href="/addSensor" name="manualToggle" class='btn btn-success my-2 mx-3 py-3 w-25' align='center'>Add<br/>Sensor</a>
 				</ul>
 			</div>
 		</div>
@@ -85,7 +89,7 @@
 	</div>
 
 	<div class="panel-option fixed-top">
-	  <a href='/home' style='font-size: 30px;'><i class="fas fa-power-off"></i></a>
+	  <a href='/logout' style='font-size: 30px;'><i class="fas fa-power-off"></i></a>
 	</div>
 
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>

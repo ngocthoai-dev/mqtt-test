@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ./partial/top.ejs %>
+	<link rel="stylesheet" href="./stylesheets/style.css">
+	<style type="text/css" media="screen">
+		#container .panel {
+			height: 90%;
+			box-shadow: 0 0 10px inset rgba(0, 0, 0, 0.5);
+			border-radius: 2rem;
+		}
+	</style>
+</head>
+<body>
+	<div id='container' class='row p-0 m-0 pt-5 d-flex justify-content-center'>
+		<div class='p-4 panel'>
+			<div class='panel-container'>
+				<input type="text" name="" value="" placeholder="Add new Tree">
+
+				<div class='plant-list'>
+					<div class='list-tree-container'>
+						<ul class="list-group list-tree p-0 py-3">
+							<% data.forEach((treeName)=>{ %>
+								<li class='list-group-item border-0 p-1 w-100'>
+									<button type="button" class="btn btn-outline-info tree-elems w-100"><%= treeName %></button>
+								</li>
+							<% }) %>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel-option fixed-top">
+	  <a href='/logout' style='font-size: 30px;'><i class="fas fa-power-off"></i></a>
+	</div>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="/javascripts/main.js" charset="utf-8"></script>
+</body>
+</html>
