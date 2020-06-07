@@ -1,6 +1,15 @@
-function panel_toggle(){
-  let filterPanel = document.getElementsByClassName('filter-panel')[0];
+function panel_toggle(idx=0){
+  let filterPanel = document.getElementsByClassName('filter-panel')[idx];
   if(filterPanel.style.display === 'none' || filterPanel.style.display === ''){
+    filterPanel.style.cssText = 'display: flex !important';
+  } else {
+    filterPanel.style.cssText = 'display: none !important';
+  }
+}
+
+function watering_toggle(){
+  let filterPanel = document.getElementsByClassName('watering')[0];
+  if(window.getComputedStyle(filterPanel).getPropertyValue('display') === 'none'){
     filterPanel.style.cssText = 'display: flex !important';
   } else {
     filterPanel.style.cssText = 'display: none !important';
@@ -63,30 +72,51 @@ const postTreeWater = (data, treeName)=>
 
 function tree_schedule_water(evt, treeName){
 	evt.preventDefault();
+  // console.log(evt.target[0].value, "-", evt.target[1].value, "-", evt.target[2].value, "-", evt.target[3].value);
 	postTreeWater({
+    freq: evt.target[0].value,
 		hh: evt.target[1].value,
 		mm: evt.target[2].value,
 		waterLvl: evt.target[3].value,
     type: 'schedule',
 	}, treeName).then(res=>{
-    console.log('test');
     console.log(res);
   }).catch(error => {
-      console.log(error.response);
+    console.log(error.response);
   });
 }
 
+let wateringTimeoutIntermission;
 function tree_manual_water(evt, treeName){
-  console.log(evt.target);
+  // console.log(evt.target);
 	evt.preventDefault();
 	postTreeWater({
 		flow: evt.target[1].value,
-		sensor: evt.target[3].value,
-    type: 'manual'
+		tree: treeName,
+    type: 'manual',
 	}, treeName).then(res=>{
-    console.log(res);
+    if(res.data.success) {
+      watering_toggle();
+      wateringTimeoutIntermission = setTimeout(function(){
+        watering_toggle();
+      }, evt.target[1].value*1000);
+    } else {
+      console.log(res.data.success);
+    }
   });
-  panel_toggle();
+}
+function stop_manual_water(evt, treeName){
+  evt.preventDefault();
+  postTreeWater({
+    type: 'manual-stop',
+    tree: treeName,
+  }, treeName).then(res=>{
+    console.log(res);
+    if(res.data.success){
+      clearTimeout(wateringTimeoutIntermission);
+      watering_toggle();
+    }
+  });
 }
 
 // report/tree
@@ -105,6 +135,54 @@ function getFullyReport(evt, treeName){
   });
 }
 
-function addSensor(evt){
+
+function givePermission(evt, treeName){
   evt.preventDefault();
+  let user = document.getElementsByClassName('add-user')[0].firstElementChild.value;
+  axios.post('/givePermission', {
+    treeName: treeName,
+    user: user,
+  }).then((res)=>{
+    console.log(res.data.success);
+    if(res.data.success){
+			swal({
+				title: "Updated!",
+				text: "You give permission of this tree to " + user,
+				icon: "success",
+				button: "Done!",
+			});
+    } else {
+			swal({
+				title: "Wrong user!",
+				text: res.msg,
+				icon: "warning",
+				button: "Retry!",
+			});
+    }
+  });
+}
+
+
+function addPhone(evt, treeName){
+  evt.preventDefault();
+  let phone = document.getElementsByClassName('add-phone')[0].firstElementChild.value;
+  axios.post('/addPhone', {
+    phone: phone,
+  }).then((res)=>{
+    if(res.data.success){
+			swal({
+				title: "Updated!",
+				text: "You add your " + phone,
+				icon: "success",
+				button: "Done!",
+			});
+    } else {
+			swal({
+				title: "Wrong phone number!",
+				text: res.msg,
+				icon: "warning",
+				button: "Retry!",
+			});
+    }
+  });
 }

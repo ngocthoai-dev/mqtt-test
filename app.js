@@ -8,6 +8,9 @@ const cors = require('cors');
 
 var usersRouter = require('./routes/users');
 var indexRouter = require('./routes/index').router;
+var schedule = require('./routes/schedule').fetch_schedule_water;
+
+schedule();
 
 var app = express();
 
@@ -21,9 +24,13 @@ app.use(express.urlencoded({ extended: false }));
 
 hashing = require('./routes/custom_hashing');
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session)
 app.use(session({
   key: 'sec',
   secret: hashing.hash(hashing.getSecId(), {rounds: 20}),
+  store: new MemoryStore({
+    checkPeriod: 1000 * 60 * 60 * 24, // prune expired entries every 24h
+  }),
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true, maxAge: 1000 * 60 * 60 * 24 } // expire after 1 day

@@ -6,7 +6,7 @@
 
     <title>Report</title>
 
-    <style>      
+    <style>
       .main {
         width: 640px;
         padding: 50px;
@@ -49,7 +49,7 @@
       </div>
 
       <div id='container'>
-        <h3>Temperature, Moisture, and Humidity of <%= tree.name %> in the last 7 days:</h3>
+        <h3>Report of <%= tree.name %>(schedule: <%= tree.data.schedule.time + " every " + tree.data.schedule.frequency + " day, flow: " + tree.data.schedule.flow %>) in the last 7 days:</h3>
         <ul>
       	<% for (const [date, value] of Object.entries(tree.data)) { %>
 					<li>

@@ -17,10 +17,12 @@
     "html-pdf": "^2.2.0",
     "http-errors": "^1.6.3",
     "md5": "^2.2.1",
+    "memorystore": "^1.6.2",
     "moment": "^2.26.0",
     "mongodb": "^3.5.7",
     "morgan": "^1.9.1",
-    "mqtt": "^4.1.0"
+    "mqtt": "^4.1.0",
+    "sweetalert": "^2.1.2"
   },
   "proxy": "http://localhost:4444"
 }

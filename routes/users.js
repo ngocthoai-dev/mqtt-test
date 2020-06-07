@@ -44,15 +44,15 @@ router.post('/', function(req, res) {
 				if(user == undefined){
 					res.send({ msg: 'user not existed!', tagMsg: "username", success: false });
 				} else if(!hashing.compare(password, user.password)){
-					res.send({ msg: 'password is incorrect!', tagMsg: "username", success: false });
+					res.send({ msg: 'password is incorrect!', tagMsg: "password", success: false });
 				} else {
 			    let options = {
 		        maxAge: 1000 * 60 * 60 * 24, // expire after 1 day
 		        httpOnly: true, // The cookie only accessible by the web server
 		        signed: true // Indicates cookie should be signed
 			    }
-			    req.session.user = hashing.hash(username, {rounds: 20});
-					res.cookie("secid", hashing.hash(username, {rounds: 20}), options);
+			    req.session.user = hashing.hash(username, {salt: username, rounds: 20});
+					res.cookie("secid", hashing.hash(username, {salt: username, rounds: 20}), options);
 					res.send({ success: true });
 					console.log('new user from:', req.url);
 				}
@@ -70,7 +70,7 @@ router.post('/', function(req, res) {
 				res.send({ msg: 'username must be alphabet, _, or numeric and first character cant be numeric, also greater than 8!', tagMsg: "username", success: false });
 			} else if(!/^([A-Za-z_]+[a-z_0-9]{7,})$/.test(password)){
 				res.send({ msg: 'password must be alphabet, _, or numeric and first character cant be numeric, also greater than 8!', tagMsg: "password", success: false });
-			} else if(user.username){
+			} else if(user != undefined){
 				res.send({ msg: 'user existed!', tagMsg: "username", success: false });
 			} else {
 				db().collection('user').insertOne({ username: username, password: hashing.hash(password, {salt: username, rounds: 20}) }, (err)=>{
@@ -80,8 +80,8 @@ router.post('/', function(req, res) {
 		        httpOnly: true, // The cookie only accessible by the web server
 		        signed: true // Indicates cookie should be signed
 			    }
-			    req.session.user = hashing.hash(username, {rounds: 20});
-					rse.cookie("secid", hashing.hash(username, {rounds: 20}), options);
+			    req.session.user = hashing.hash(username, {salt: username, rounds: 20});
+					res.cookie("secid", hashing.hash(username, {salt: username, rounds: 20}), options);
 					res.send({ success: true });
 					console.log('new user from:', req.url);
 				});
