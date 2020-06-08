@@ -78,7 +78,7 @@
 						<ul class="list-group list-tree p-0 py-3">
 							<% data.forEach((treeName)=>{ %>
 								<li class='list-group-item border-0 p-1 w-100'>
-									<button type="button" class="btn btn-outline-info tree-elems w-100" onCLick="adjustTree(event, 'adjust')"><%= treeName %></button>
+									<button type="button" class="btn btn-outline-info tree-elems w-100" onCLick="adjustTree(event, 'adjust')" title='update tree'><%= treeName %></button>
 								</li>
 							<% }) %>
 						</ul>
@@ -99,8 +99,8 @@
 	</div>
 
 	<div class="panel-option fixed-top">
-	  <a href='/logout' style='font-size: 30px;'><i class="fas fa-power-off"></i></a>
-	  <a href='./home' style='font-size: 30px;'><i class="fas fa-arrow-circle-left"></i></a>
+	  <a href='/logout' style='font-size: 30px;' title='logout'><i class="fas fa-power-off"></i></a>
+	  <a href='./home' style='font-size: 30px;' title='return home'><i class="fas fa-arrow-circle-left"></i></a>
 	</div>
 
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -139,10 +139,11 @@
 
 		function updateTree(evt){
 			evt.preventDefault();
-			// console.log(evt.currentTarget.childNodes[1].textContent, evt.target[0].value, evt.target[1].value, evt.target[2].value);
+			console.log(evt.currentTarget.childNodes[1].textContent, evt.target[0].value, evt.target[1].value, evt.target[2].value);
+			let treeName = evt.currentTarget.childNodes[1].textContent;
 			axios.post('/addSensor', {
 				data: {
-					treeName: evt.currentTarget.childNodes[1].textContent,
+					treeName: treeName,
 					temperature: evt.target[0].value,
 					moisture: evt.target[1].value,
 					humidity: evt.target[2].value,
@@ -150,21 +151,23 @@
 				},
 			}).then((res)=>{
 				if(res.data.success){
-					let liTag = document.createElement('li');
-					liTag.className = 'list-group-item border-0 p-1 w-100';
-					let btnTag = document.createElement('button');
-					btnTag.className = 'btn btn-outline-info tree-elems w-100';
-					btnTag.type = 'button';
-					btnTag.textContent = evt.currentTarget.childNodes[1].textContent;
-					btnTag.onCLick = '';
+					if(!res.data.msg.localeCompare('add')){
+						let liTag = document.createElement('li');
+						liTag.className = 'list-group-item border-0 p-1 w-100';
+						let btnTag = document.createElement('button');
+						btnTag.className = 'btn btn-outline-info tree-elems w-100';
+						btnTag.type = 'button';
+						btnTag.textContent = treeName;
+						btnTag.onCLick = '';
 
-					liTag.appendChild(btnTag);
+						liTag.appendChild(btnTag);
 
-					document.getElementsByClassName('list-tree')[0].appendChild(liTag);
+						document.getElementsByClassName('list-tree')[0].appendChild(liTag);
+					}
 
 					swal({
 						title: "Updated!",
-						text: "You update " + evt.currentTarget.childNodes[1].textContent,
+						text: "You update " + treeName,
 						icon: "success",
 						button: "Thanks!",
 					});

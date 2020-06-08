@@ -54,7 +54,7 @@ let fetch_schedule_water = ()=>{
       if(err) throw err;
 
       trees.forEach((tree, i) => {
-        if(tree.schedule && tree.schedule.frequency != 0){
+        if(tree.schedule && tree.schedule.frequency != 0 && tree.schedule.length>0){
           if((treeInWater[tree.name] != undefined && treeInWater[tree.name].time.localeCompare(tree.schedule.time)) || treeInWater[tree.name] == undefined){
             if(schedule_water_list[tree.name]){
               deleteScheduleList(tree.name);

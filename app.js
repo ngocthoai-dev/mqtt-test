@@ -9,6 +9,8 @@ const cors = require('cors');
 var usersRouter = require('./routes/users');
 var indexRouter = require('./routes/index').router;
 var schedule = require('./routes/schedule').fetch_schedule_water;
+var msgAlert = require('./routes/msgAlert').checkInDangerTree;
+var msgAlert = require('./routes/mqtt_connection').mqttConnection;
 
 schedule();
 

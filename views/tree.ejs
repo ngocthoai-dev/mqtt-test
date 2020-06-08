@@ -17,35 +17,37 @@
           <h4 class='text-success'>Schedule Watering</h4>
         </div>
 				<form class="" method="post" onsubmit='<%= 'tree_schedule_water(event, "' + tree.name + '")' %>'>
-					<select class="custom-select freq-select">
-						<option selected value="1">Everyday</option>
+					<select class="custom-select freq-select" title='frequency of watering'>
+						<option selected value="0">Everyday</option>
+						<option value="1">Everyday</option>
 						<option value="2">Every 2 Days</option>
 						<option value="4">Every 4 Days</option>
 						<option value="7">Every Weeks</option>
 					</select>
 					<div class="time-watering mt-3">
-						<input type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour">
+						<input type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour" title='hour to watering'>
+						<input type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour" title='minute to watering'>
 						<input type="number" name="" min="0" max="60" value="" class='p-2 mm' placeholder="minute">
 					</div>
 					<div class="time-watering mt-3">
-						<input type="number" name="" min="0" max="" value="" class='p-2 ml' placeholder="water level">
+						<input type="number" name="" min="0" max="" value="" class='p-2 ml' placeholder="water level" title='level water needed for automation'>
 						<input type="text" name="" value="ml" class='p-2' readonly>
 					</div>
 					<div class="filter-submit w-100 pt-3" align='center'>
-						<button type="submit" name="" class="btn btn-success filter-button"><i class="far fa-calendar-check"></i></button>
+						<button type="submit" name="" class="btn btn-success filter-button" title='save schedule time'><i class="far fa-calendar-check"></i></button>
 					</div>
 				</form>
         <div class='action-title my-3'>
           <h4 class='text-success'>Manual and Permission</h4>
         </div>
-				<button onClick="panel_toggle(1)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center'>Give<br/>Permission</button>
-				<button onClick="panel_toggle()" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center'>Manual<br/>Watering</button>
+				<button onClick="panel_toggle(1)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='give availability to other'>Give<br/>Permission</button>
+				<button onClick="panel_toggle()" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='watering'>Manual<br/>Watering</button>
 			</div>
 		</div>
 
 		<div class='right col-6'>
 			<div class='overall-title mx-2'>
-				<a class='text-success get-fully-report' href='<%= "/report/" + tree.name %>'>Report</a>
+				<a class='text-success get-fully-report' href='<%= "/report/" + tree.name %>' title='move to temperarily report'>Report</a>
 			</div>
 			<div class='overall-element'>
 				<ul class="list-group list-overall">
@@ -71,7 +73,7 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-primary'><%= tree.lastWater.split('T')[0] %><br/><%= tree.lastWater.split('T')[1] %></h5>
+				  	<h5 class='value m-0 p-0 col-4 text-primary'><%= tree.lastWater.toLocaleString().split('T')[0] %><br/><%= tree.lastWater.toLocaleString().split('T')[1] %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-4'>Sensors</h6>
@@ -101,17 +103,17 @@
 					</div>
 					<span class='text-success'>Flow</span>
 					<div class="time-watering my-3">
-						<input type="number" name="" min="0" value="" class='p-2 hh' placeholder="speed">
+						<input type="number" name="" min="0" value="" class='p-2 hh' placeholder="speed" title='level needed'>
 						<input type="text" name="" value="ml/s" class='p-2' readonly>
 					</div>
 					<div class="filter-submit w-100 pt-3" align='center'>
-						<button type="submit" name="FilterButton" class="btn btn-success filter-button"><i class="fas fas fa-tint text-white"></i></button>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button" title='water now'><i class="fas fas fa-tint text-white"></i></button>
 					</div>
 			  </form>
 			</div>
 			<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
 			<div class='watering' style='display: <%= tree.isWatering ? "flex !important" : "none !important" %>'>
-				<button class="btn btn-success" onClick='<%= 'stop_manual_water(event, "' + tree.name + '")' %>'>STOP!</button>
+				<button class="btn btn-success" onClick='<%= 'stop_manual_water(event, "' + tree.name + '")' %>' title='stop watering'>STOP!</button>
 				<img src="../images/watering_can.png" alt="watering_can">
 				<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
 			</div>
@@ -173,8 +175,8 @@
 	</div> -->
 
 	<div class="panel-option fixed-top">
-	  <a href='../logout' style='font-size: 30px;'><i class="fas fa-power-off"></i></a>
-	  <a href='../home' style='font-size: 30px;'><i class="fas fa-arrow-circle-left"></i></a>
+	  <a href='../logout' style='font-size: 30px;' title='return home'><i class="fas fa-power-off"></i></a>
+	  <a href='../home' style='font-size: 30px;' title='logout'><i class="fas fa-arrow-circle-left"></i></a>
 	</div>
 
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>

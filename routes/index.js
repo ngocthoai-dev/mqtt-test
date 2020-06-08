@@ -26,27 +26,17 @@ var sessionChecker = (req, res, next) => {
   }
 };
 
-
-// mqtt connect
-const mqtt = require('mqtt');
-let mqttClient = mqtt.connect('mqtt:52.163.220.103:1883');
-mqttClient.on('connect', function() {
-  mqttClient.subscribe('water', function(err, granted) {
-    console.log('connected');
-    if (!err) {
-      console.log(granted);
-    }
-  });
-});
-
-mqttClient.on('message', function(topic, message) {
-  // message is Buffer
-  console.log(topic);
-  console.log(message.toString());
-});
-
 // routing section
 let router = express.Router();
+
+
+const msgAlert = require('../routes/msgAlert');
+router.get('/sendMsg', function(req, res){
+  console.log('sendMsg');
+  msgAlert.sendMsg("guest121019@gmail.com", "pnthoai165@gmail.com", function(res){
+    console.log(res);
+  });
+});
 
 
 // testing intermission page
@@ -65,14 +55,16 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
 
     treeLst.forEach((tree) => {
       trees.push(tree.name);
-      Object.keys(tree.water).forEach((key)=>{
-        if(new Date(key) < new Date()){
-          everyTreeWater = "NO";
-        }
-        if(new Date(key + "T" + tree.water[key]) >= lastWatering){
-          lastWatering = new Date(key + "T" + tree.water[key]);
-        }
-      });
+      if(tree.water){
+        Object.keys(tree.water).forEach((key)=>{
+          if(new Date(key) < new Date()){
+            everyTreeWater = "NO";
+          }
+          if(new Date(key + "T" + tree.water[key]) >= lastWatering){
+            lastWatering = new Date(key + "T" + tree.water[key]);
+          }
+        });
+      }
     });
     console.log(trees);
 
@@ -103,12 +95,13 @@ router.post('/operation/filterTreeList', sessionChecker, function(req, res, next
   if (humidityMaxValue == '')
     humidityMaxValue = Number.MAX_SAFE_INTEGER;
 
+  console.log(temperatureMinValue, temperatureMaxValue, moistureMinValue, moistureMaxValue, humidityMinValue, humidityMaxValue);
+
   db().collection('tree').find({
     name: { "$regex": req.body.data.TreeName, "$options": "i" },
-    data: { $elemMatch : {
-      temperature: { "$gte": parseInt(temperatureMinValue), "$lte": parseInt(temperatureMaxValue) },
-      moisture: { "$gte": parseInt(moistureMinValue), "$lte": parseInt(moistureMaxValue) },
-      humidity: { "$gte": parseInt(humidityMinValue), "$lte": parseInt(humidityMaxValue) } } },
+    'currentData.temperature': { "$gte": parseInt(temperatureMinValue), "$lte": parseInt(temperatureMaxValue) },
+    'currentData.moisture': { "$gte": parseFloat(moistureMinValue), "$lte": parseFloat(moistureMaxValue) },
+    'currentData.humidity': { "$gte": parseInt(humidityMinValue), "$lte": parseInt(humidityMaxValue) },
     user: req.signedCookies['secid'],
   }).toArray(function(err, treeLst){
     if(err) throw err;
@@ -235,19 +228,21 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
 
     let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater=new Date('01-01-2020'), sensors=[], isWatering=false;
     result.forEach((tree, i) => {
-      temp = tree.data[0].temperature;
-      mois = tree.data[0].moisture;
-      humi = tree.data[0].humidity;
+      temp = tree.currentData.temperature;
+      mois = tree.currentData.moisture;
+      humi = tree.currentData.humidity;
       sensors = tree.sensor;
       isWatering = tree.isWatering;
-      let length = Object.keys(tree.water).length - 1;
-      if(Object.keys(tree.water)[length]){
-        isWaterToday = (Object.keys(tree.water)[length] == new Date().toISOString().split("T")[0]) ? "YES" : "NO";
-        lastWater =  tree.water[Object.keys(tree.water)[length]][0] + "T" + Object.keys(tree.water)[length].split("-")[2] + "-" + Object.keys(tree.water)[length].split("-")[1] + "-"  + Object.keys(tree.water)[length].split("-")[0];
+      if(tree.water && tree.water.length > 0){
+        let length = Object.keys(tree.water).length - 1;
+        if(Object.keys(tree.water)[length]){
+          isWaterToday = (Object.keys(tree.water)[length] == new Date().toISOString().split("T")[0]) ? "YES" : "NO";
+          lastWater =  tree.water[Object.keys(tree.water)[length]][0] + "T" + Object.keys(tree.water)[length].split("-")[2] + "-" + Object.keys(tree.water)[length].split("-")[1] + "-"  + Object.keys(tree.water)[length].split("-")[0];
+        }
       }
     });
     // console.log(sensors);
-    console.log(req.params.treeName, isWatering);
+    console.log(req.params.treeName, isWatering, lastWater);
 
     res.render('../views/tree', {
       tree: {
@@ -436,41 +431,93 @@ router.post('/addSensor', sessionChecker, function(req, res) {
   if(req.body.data.type.includes('update-tree')){
     let treeName=req.body.data.treeName, tempName=req.body.data.temperature, moisName=req.body.data.moisture, humiName=req.body.data.humidity, user=req.signedCookies['secid'];
     let sensor=[], today=new Date();
-    if(tempName != ''){
-      sensor.push({
-        temperature: tempName,
-        date: today,
-      });
-    }
-    if(moisName != ''){
-      sensor.push({
-        moisture: moisName,
-        date: today,
-      });
-    }
-    if(humiName != ''){
-      sensor.push({
-        humidity: humiName,
-        date: today,
-      });
-    }
 
-    db().collection('tree').findOneAndUpdate({
-      user: req.signedCookies['secid'], name: treeName,
-    }, {
-      $set: {
-        name: treeName,
-        data: [],
-        sensor: sensor,
-        user: [user],
-        isWatering: false,
-      }
-    }, { upsert: true },
-    function(err, re){
+    db().collection('tree').find({
+      user: req.signedCookies['secid'],
+      name: treeName,
+    }).toArray((err, trees)=>{
       if(err) throw err;
 
-      console.log(re);
-      res.send({ success: true });
+      if(tempName != ''){
+        sensor.push({
+          temperature: tempName,
+          date: today,
+        });
+      }
+      if(moisName != ''){
+        sensor.push({
+          moisture: moisName,
+          date: today,
+        });
+      }
+      if(humiName != ''){
+        sensor.push({
+          humidity: humiName,
+          date: today,
+        });
+      }
+
+      if(trees.length > 0){
+        trees.forEach((tree, i) => {
+          if(tempName == ''){
+            tree.sensor.forEach((item, i) => {
+              if(Object.keys(item).includes('temperature')){
+                sensor.push(item);
+              }
+            });
+          }
+          if(moisName == ''){
+            tree.sensor.forEach((item, i) => {
+              if(Object.keys(item).includes('moisture')){
+                sensor.push(item);
+              }
+            });
+          }
+          if(humiName == ''){
+            tree.sensor.forEach((item, i) => {
+              if(Object.keys(item).includes('humidity')){
+                sensor.push(item);
+              }
+            });
+          }
+        });
+
+        db().collection('tree').findOneAndUpdate({
+          user: req.signedCookies['secid'],
+          name: treeName,
+        }, {
+          $set: {
+            sensor: sensor,
+          },
+        }, { upsert: true },
+        function(err, re){
+          if(err) throw err;
+
+          // console.log(re);
+          res.send({ success: true, msg: 'update' });
+        });
+      } else {
+        db().collection('tree').findOneAndUpdate({
+          user: req.signedCookies['secid'],
+          name: treeName,
+        }, {
+          $set: {
+            name: treeName,
+            data: [],
+            schedule: {},
+            water: {},
+            sensor: sensor,
+            user: [user],
+            isWatering: false,
+          }
+        }, { upsert: true },
+        function(err, re){
+          if(err) throw err;
+
+          // console.log(re);
+          res.send({ success: true, msg: 'add' });
+        });
+      }
     });
   } else {
     res.send({ success: false, msg: 'Incorrect order!' });
@@ -504,17 +551,17 @@ router.post('/givePermission', sessionChecker, function(req, res){
 });
 
 
-const checkPhoneNumber = require('../routes/checkPhoneNumber').checkPhoneNumber;
+const checkEmail = require('../routes/checkEmail').checkEmail;
 
-router.post('/addPhone', sessionChecker, function(req, res){
-  let phone=req.body.phone, user=req.signedCookies['secid'].split('$')[0];
+router.post('/addEmail', sessionChecker, function(req, res){
+  let email=req.body.email, user=req.signedCookies['secid'].split('$')[0];
 
-  if(checkPhoneNumber(phone)){
+  if(checkEmail(email)){
     db().collection('user').findOneAndUpdate({
       username: user,
     }, {
       $set: {
-        phone: phone,
+        email: email,
       }
     }, {},
     function(err, re){
@@ -523,7 +570,7 @@ router.post('/addPhone', sessionChecker, function(req, res){
       res.send({ success: true });
     });
   } else {
-    res.send({ success: false, msg: 'your phone is not correct' });
+    res.send({ success: false, msg: 'your email is not correct' });
   }
 });
 

@@ -163,22 +163,22 @@ function givePermission(evt, treeName){
 }
 
 
-function addPhone(evt, treeName){
+function addEmail(evt){
   evt.preventDefault();
-  let phone = document.getElementsByClassName('add-phone')[0].firstElementChild.value;
-  axios.post('/addPhone', {
-    phone: phone,
+  let email = document.getElementsByClassName('add-email')[0].firstElementChild.value;
+  axios.post('/addEmail', {
+    email: email,
   }).then((res)=>{
     if(res.data.success){
 			swal({
 				title: "Updated!",
-				text: "You add your " + phone,
+				text: "You add your email: " + email,
 				icon: "success",
 				button: "Done!",
 			});
     } else {
 			swal({
-				title: "Wrong phone number!",
+				title: "Wrong email!",
 				text: res.msg,
 				icon: "warning",
 				button: "Retry!",
