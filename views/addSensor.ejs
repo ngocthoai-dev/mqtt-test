@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ./partial/top.ejs %>
+	<link rel="stylesheet" href="./stylesheets/style.css">
+	<style type="text/css" media="screen">
+		#container .panel {
+			height: 90%;
+			box-shadow: 0 0 10px inset rgba(0, 0, 0, 0.5);
+			border-radius: 2rem;
+			overflow-y: hidden;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 50%;
+			position: relative;
+		}
+
+		@media only screen and (max-width: 425px){
+			#container .panel {
+				width: 80%;
+			}
+		}
+
+		.panel-container .new-tree {
+			width: 80%;
+		}
+
+		.new-tree input {
+			width: 80%;
+		}
+
+		#container .panel .panel-container .plant-list {
+			overflow-y: auto;
+    	width: 80%;
+			height: 80%;
+		}
+
+		.panel-container .new-tree input {
+			border-radius: 2rem 0.5rem 0.5rem 2rem;
+		}
+
+		.panel .panel-container {
+			position: absolute;
+			top: 10%;
+			transition: all 0.5s;
+			height: 80%;
+		}
+
+		.panel .update-tree {
+			top: 100%;
+			position: absolute;
+			transition: all 0.5s;
+			height: 80%;
+		}
+
+		.update-tree form {
+			overflow-y: auto;
+			height: 100%;
+		}
+
+		.update-tree form input {
+			border-radius: 2rem;
+		}
+	</style>
+</head>
+<body>
+	<div id='container' class='row p-0 m-0 pt-5 d-flex justify-content-center'>
+		<div class='p-4 panel'>
+			<div class='panel-container d-flex flex-column align-items-center'>
+				<div class='new-tree d-flex'>
+					<input type="text" name="addTree" value="" placeholder="Add new Tree" class='p-2 mr-2'>
+					<button type="submit" name="addTree" class='btn btn-success' onclick="adjustTree(event, 'add')">Add</button>
+				</div>
+
+				<div class='plant-list'>
+					<div class='list-tree-container'>
+						<ul class="list-group list-tree p-0 py-3">
+							<% data.forEach((treeName)=>{ %>
+								<li class='list-group-item border-0 p-1 w-100'>
+									<button type="button" class="btn btn-outline-info tree-elems w-100" onCLick="adjustTree(event, 'adjust')" title='update tree'><%= treeName %></button>
+								</li>
+							<% }) %>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="update-tree">
+				<form method='post' class="update-tree-form d-flex flex-column align-items-center" onsubmit='updateTree(event)'>
+					<h3 class='text-success'>tree</h3>
+					<i class="fas fa-undo text-success m-2" onClick="update_tree_toggle('adjust')" style='cursor: pointer;'></i>
+					<input type="text" name="temphumi" value="" placeholder="temperature and humidity" class='p-2 m-2'>
+					<input type="text" name="moisture" value="" placeholder="moisture" class='p-2 m-2'>
+					<input type="text" name="motor" value="" placeholder="motor" class='p-2 m-2'>
+					<button type="submit" name="button" class='p-2 m-2 btn btn-success'>update</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel-option fixed-top">
+	  <a href='/logout' style='font-size: 30px;' title='logout'><i class="fas fa-power-off"></i></a>
+	  <a href='./home' style='font-size: 30px;' title='return home'><i class="fas fa-arrow-circle-left"></i></a>
+	</div>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="/javascripts/main.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		function adjustTree(evt, type){
+			evt.preventDefault();
+
+			let title = document.getElementsByClassName('update-tree-form')[0].childNodes[1];
+			if(type.includes('add')){
+				title.textContent = evt.currentTarget.parentNode.firstElementChild.value;
+				update_tree_toggle('update');
+			} else if(type.includes('adjust')){
+				title.textContent = evt.currentTarget.textContent;
+				update_tree_toggle('update');
+			} else {
+				swal({
+					title: "Error Order!",
+					text: "Stop making incorrect state!",
+					icon: "warning",
+					button: "OK",
+				});
+			}
+		}
+
+		function update_tree_toggle(type){
+			if(!type.localeCompare('update')){
+				document.getElementsByClassName('panel-container')[0].style = 'top: -100%';
+				document.getElementsByClassName('update-tree')[0].style = 'top: 10%';
+			} else {
+				document.getElementsByClassName('panel-container')[0].style = 'top: 10%';
+				document.getElementsByClassName('update-tree')[0].style = 'top: 100%';
+			}
+		}
+
+		function updateTree(evt){
+			evt.preventDefault();
+			console.log(evt.currentTarget.childNodes[1].textContent, evt.target[0].value, evt.target[1].value, evt.target[2].value);
+			let treeName = evt.currentTarget.childNodes[1].textContent;
+			axios.post('/addSensor', {
+				data: {
+					treeName: treeName,
+					tempHumi: evt.target[0].value,
+					moisture: evt.target[1].value,
+					motor: evt.target[2].value,
+					type: 'update-tree',
+				},
+			}).then((res)=>{
+				if(res.data.success){
+					if(!res.data.msg.localeCompare('add')){
+						let liTag = document.createElement('li');
+						liTag.className = 'list-group-item border-0 p-1 w-100';
+						let btnTag = document.createElement('button');
+						btnTag.className = 'btn btn-outline-info tree-elems w-100';
+						btnTag.type = 'button';
+						btnTag.textContent = treeName;
+						btnTag.onCLick = '';
+
+						liTag.appendChild(btnTag);
+
+						document.getElementsByClassName('list-tree')[0].appendChild(liTag);
+					}
+
+					swal({
+						title: "Updated!",
+						text: "You update " + treeName,
+						icon: "success",
+						button: "Thanks!",
+					});
+				}
+			});
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ./partial/top.ejs %>
+	<link rel="stylesheet" href="../stylesheets/tree.css">
+	<link rel="stylesheet" href="../stylesheets/style.css">
+</head>
+<body>
+	<div id='container' class='row p-0 m-0 pt-5'>
+		<div class='left col-3'>
+			<div class='plant-title plant-title-panel d-flex align-items-center'>
+        <a href="../home" style="float: left; margin: 5%"><i class="fas fa-angle-left text-white"></i></a>
+				<h3 class='text-white m-0'><%= tree.name %></h3>
+			</div>
+			<div class='plant-action'>
+        <div class='action-title mb-3'>
+          <h4 class='text-success'>Schedule Watering</h4>
+        </div>
+				<form class="" method="post" onsubmit='<%= 'tree_schedule_water(event, "' + tree.name + '")' %>'>
+					<select class="custom-select freq-select" title='frequency of watering'>
+						<option selected value="0">No Schedule</option>
+						<option value="1">Everyday</option>
+						<option value="2">Every 2 Days</option>
+						<option value="4">Every 4 Days</option>
+						<option value="7">Every Weeks</option>
+					</select>
+					<div class="time-watering mt-3">
+						<input type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour" title='hour to watering, default: 0'>
+						<input type="number" name="" min="0" max="60" value="" class='p-2 mm' placeholder="minute" title='minute to watering, default: 0'>
+					</div>
+					<div class="time-watering mt-3">
+						<input type="number" name="" min="0" max="" value="" class='p-2 ml' placeholder="water level" title='level water needed for automation, default: 60'>
+						<input type="text" name="" value="ml" class='p-2' readonly>
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="" class="btn btn-success filter-button" title='save schedule time'><i class="far fa-calendar-check"></i></button>
+					</div>
+				</form>
+        <div class='action-title my-3'>
+          <h4 class='text-success'>Manual and Permission</h4>
+        </div>
+				<button onClick="panel_toggle(1)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='give availability to other'>Give<br/>Permission</button>
+				<button onClick="panel_toggle()" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='watering'>Manual<br/>Watering</button>
+			</div>
+		</div>
+
+		<div class='right col-6'>
+			<div class='overall-title mx-2'>
+				<a class='text-success get-fully-report' href='<%= "/report/" + tree.name %>' title='move to temperarily report'>Report</a>
+			</div>
+			<div class='overall-element'>
+				<ul class="list-group list-overall">
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Temperature</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-danger text-temp'><%= tree.temperature %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Soil Moisture</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-dark text-mois'><%= tree.moisture %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Air Humidity</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-info text-humi'><%= tree.humidity %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Is Watering?</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-primary text-iswater'><%= tree.isWatering ? "YES" : "NO" %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Were Tree Watered Today?</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-warning text-iswatertoday'><%= tree.isWaterToday %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-primary text-lastwater'><%= tree.lastWater.toLocaleString().split('T')[0] %><br/><%= tree.lastWater.toLocaleString().split('T')[1] %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-4'>Sensors</h6>
+				  	<h5 class='value m-0 p-0 col-8 text-primary'>
+				  		<% tree.sensors.forEach((item, i)=>{ %>
+								<% Object.keys(item).forEach((key)=>{ %>
+									<%= ["Moisture", "TempHumi"].includes(key) ? key + ": " + item[key] : "" %>
+								<% }); %>
+								<br />
+				  		<% }); %>
+				  	</h5>
+				  </li>
+				</ul>
+			</div>
+		</div>
+
+		<div class='app-name' align='center'>
+			awari
+		</div>
+
+		<div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+			<div class="card">
+			  <form class="card-body filter-form" method='post' onsubmit='<%= 'tree_manual_water(event, "' + tree.name + '")' %>'>
+					<div class="w-100 d-flex justify-content-between align-items-center mb-3">
+						<h3 class='m-0 text-success'>Manual Water</h3>
+						<button onClick="panel_toggle()" type="button" name="CloseFilterPanel" class="btn btn-warning close-filter"><i class="far fa-times-circle"></i></button>
+					</div>
+					<span class='text-success'>Flow</span>
+					<div class="time-watering my-3">
+						<input type="number" name="" min="0" value="" class='p-2 hh' placeholder="speed" title='level needed, default: 60'>
+						<input type="text" name="" value="ml/s" class='p-2' readonly>
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button" title='water now'><i class="fas fas fa-tint text-white"></i></button>
+					</div>
+			  </form>
+			</div>
+			<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
+			<div class='watering' style='display: <%= tree.isWatering ? "flex !important" : "none !important" %>'>
+				<button class="btn btn-success" onClick='<%= 'stop_manual_water(event, "' + tree.name + '")' %>' title='stop watering'>STOP!</button>
+				<img src="../images/watering_can.png" alt="watering_can">
+				<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
+			</div>
+		</div>
+
+		<div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+			<div class="card">
+			  <form class="card-body filter-form" method='post' onsubmit='<%= 'givePermission(event, "' + tree.name + '")' %>'>
+					<div class="w-100 d-flex justify-content-between align-items-center mb-3">
+						<h3 class='m-0 text-success'>Give Permission</h3>
+						<button onClick="panel_toggle(1)" type="button" name="CloseFilterPanel" class="btn btn-warning close-filter"><i class="far fa-times-circle"></i></button>
+					</div>
+					<span class='text-success'>User</span>
+					<div class="add-user my-3">
+						<input type="text" name="" min="0" value="" class='p-2 rounded w-100' placeholder="user name">
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button"><i class="fas fa-id-card text-white"></i></button>
+					</div>
+			  </form>
+			</div>
+			<div class="fixed-top outside-filter" onClick="panel_toggle(1)"></div>
+		</div>
+	</div>
+
+<!-- 	<div class='raining'>
+		<div class='cloud'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:1; --w:1;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:2; --w:0;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:2; --w:2;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:1; --w:0;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:3; --w:4;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:2; --w:0;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:1.5; --w:3;'>
+			<img src="../images/rain_cloud.png" alt="rain_cloud" style='--i:1; --w:0;'>
+		</div>
+
+		<div class='rain-drop'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:1; --w:0; --h:-1;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:2; --w:1; --h:-3;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:1; --w:0; --h:-2;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:2; --w:2; --h:-1;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:3; --w:-2; --h:-5;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:2; --w:0; --h:-4;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:1; --w:2; --h:0;'>
+			<img src="../images/rain_drop.png" alt="rain_drop" style='--i:2; --w:0; --h:-2;'>
+		</div>
+
+		<div class='rain-drop-bubble'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:1; --w:0;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:1; --w:1;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:3; --w:2;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:2; --w:4;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:1; --w:3;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:1; --w:7;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:3; --w:6;'>
+			<img src="../images/rain_drop_bubble.png" alt="rain_drop_bubble" style='--i:2; --w:5;'>
+		</div>
+	</div> -->
+
+	<div class="panel-option fixed-top">
+	  <a href='../logout' style='font-size: 30px;' title='return home'><i class="fas fa-power-off"></i></a>
+	  <a href='../home' style='font-size: 30px;' title='logout'><i class="fas fa-arrow-circle-left"></i></a>
+	</div>
+
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="/javascripts/main.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		let docTemp=document.getElementsByClassName('text-temp')[0], docMois=document.getElementsByClassName('text-mois')[0], docHumi=document.getElementsByClassName('text-humi')[0],
+			docIswater=document.getElementsByClassName('text-iswater')[0], docIswatertoday=document.getElementsByClassName('text-iswatertoday')[0],
+			docLastwater=document.getElementsByClassName('text-lastwater')[0], docWater=document.getElementsByClassName('watering')[0];
+
+		let treeName = '<%= tree.name %>';
+
+		setInterval(()=>{
+			axios.post('/tree/refresh', { treeName: treeName })
+			.then((res)=>{
+				if(res.data.status.includes('no-change')){
+
+				} else if(res.data.status.includes('changed')) {
+					let updateTemp=res.data.data.temperature, updateMois=res.data.data.moisture, updateHumi=res.data.data.humidity, updateIswatering=res.data.data.isWatering,
+						updateIswatertoday=res.data.data.isWaterToday, updateLastwater=res.data.data.lastWater;
+
+					docTemp.textContent = updateTemp;
+					docMois.textContent = updateMois;
+					docHumi.textContent = updateHumi;
+					docIswater.textContent = updateIswatering ? "YES" : "NO";
+					docIswatertoday.textContent = updateIswatertoday;
+					docLastwater.textContent = updateLastwater.toLocaleString().split('T')[0] + '_' + updateLastwater.toLocaleString().split('T')[1];
+					docWater.style.display = updateIswatering ? "flex !important" : "none !important";
+				}
+			})
+			.catch(err=>{
+				// console.log(err.response);
+			});
+		}, 1000);
+	</script>
+</body>
+</html>

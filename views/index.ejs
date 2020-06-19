@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<% include ./partial/top.ejs %>
+	<link rel="stylesheet" href="./stylesheets/style.css">
+</head>
+<body>
+	<div id='container' class='row p-0 m-0 pt-5'>
+		<div class='left col-3'>
+			<div class='plant-title d-flex justify-content-between align-items-center'>
+				<h3 class='text-success'>Plants</h3>
+				<i class="fas fa-sort-amount-down-alt text-success plant-filter" onClick="panel_toggle()" style='cursor: pointer;' title="plant filter"></i>
+			</div>
+			<div class='plant-list'>
+				<div class='list-tree-container'>
+					<ul class="list-group list-tree">
+						<% data.forEach((treeName)=>{ %>
+							<li class='list-group-item border-0 p-1'>
+								<a href=<%= '/tree/' + treeName %>><button type="button" class="btn btn-success tree-elems w-100" title='get info of tree'><%= treeName %></button></a>
+							</li>
+						<% }) %>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class='right col-6'>
+			<div class='overall-title mx-2'>
+				<h3 class='text-success'>Overall</h3>
+			</div>
+			<div class='overall-element'>
+				<ul class="list-group list-overall">
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Were Every Tree Watered?</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-warning'><%= everyTreeWater %></h5>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
+				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
+				  	<h5 class='value m-0 p-0 col-4 text-primary'>
+				  		<%= lastWatering.getHours() + ":" + lastWatering.getMinutes() %>
+				  		<br/>
+				  		<%= lastWatering.getDate() + "/" %><%= lastWatering.getMonth()+1 %><%= "/" + lastWatering.getFullYear() %>
+				  	</h5>
+				  </li>
+					<div class="">
+				  	<a href="/addSensor" name="addSensor" class='btn btn-success my-2 mx-3 py-3 w-25' align='center'>Add<br/>Sensor</a>
+						<button onClick="panel_toggle(1)" type="button" name="addEmail" class='btn btn-success my-2 mx-3 py-3 w-25' align='center'>Add<br/>Email</button>
+					</div>
+				</ul>
+			</div>
+		</div>
+
+		<div class='app-name' align='center'>
+			awari
+		</div>
+
+		<div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+			<div class="card">
+			  <form class="card-body filter-form" method='post' action='/filterTreeList' onsubmit='filter_submit(event)'>
+					<div class="w-100 d-flex justify-content-between align-items-center mb-3">
+						<h3 class='m-0'>Plant Filter</h3>
+						<button onClick="panel_toggle()" type="button" name="CloseFilterPanel" class="btn btn-warning close-filter"><i class="far fa-times-circle"></i></button>
+					</div>
+					<input class='tree-name-input' type="text" name="treeName" value="" placeholder="Tree Name">
+					<div class="filter-range">
+						<span>Temperature<br/>Range</span>
+						<div class="range">
+							<input type="number" name="TemperatureMinValue" value="" placeholder="from">
+							-
+							<input type="number" name="TemperatureMaxValue" value="" placeholder="to">
+						</div>
+					</div>
+					<div class="filter-range">
+						<span>Moisture<br/>Range</span>
+						<div class="range">
+							<input type="number" name="MoistureMinValue" value="" placeholder="from">
+							-
+							<input type="number" name="MoistureMaxValue" value="" placeholder="to">
+						</div>
+					</div>
+					<div class="filter-range">
+						<span>Humidity<br/>Range</span>
+						<div class="range">
+							<input type="number" name="HumidityMinValue" value="" placeholder="from">
+							-
+							<input type="number" name="HumidityMaxValue" value="" placeholder="to">
+						</div>
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button"><i class="fas fas-arrow-right text-white"></i></button>
+					</div>
+			  </form>
+			</div>
+			<div class="fixed-top outside-filter" onClick="panel_toggle()"></div>
+		</div>
+
+
+		<div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+			<div class="card">
+				<form class="card-body filter-form" method='post' onsubmit='<%= 'addEmail(event)' %>'>
+					<div class="w-100 d-flex justify-content-between align-items-center mb-3">
+						<h3 class='m-0 text-success'>Add Email</h3>
+						<button onClick="panel_toggle(1)" type="button" name="CloseFilterPanel" class="btn btn-warning close-filter"><i class="far fa-times-circle"></i></button>
+					</div>
+					<span class='text-success'>Email</span>
+					<div class="add-email my-3">
+						<input type="text" name="" maxlength="" value="" class='p-2 rounded w-100' placeholder="Gmail" title='if wrong mail you will not receive some impportant alert!'>
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button"><i class="fas fa-id-card text-white"></i></button>
+					</div>
+				</form>
+			</div>
+			<div class="fixed-top outside-filter" onClick="panel_toggle(1)"></div>
+		</div>
+	</div>
+
+
+	<div class="panel-option fixed-top">
+	  <a href='/logout' style='font-size: 30px;'><i class="fas fa-power-off" title='logout'></i></a>
+	</div>
+
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="/javascripts/main.js" charset="utf-8"></script>
+</body>
+</html>

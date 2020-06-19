@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <% include ./partial/top.ejs %>
+  <style type="text/css" media="screen">
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: url('../images/login_background.png') no-repeat;
+      background-size: 30% 100%;
+      padding: 0;
+      margin: 0;
+    }
+
+    html {
+      background: url('../images/background.jpg') no-repeat;
+      background-size: cover;
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+      width: 0.2rem;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 5px green;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+      background: green;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 100, 0, 0.5);
+    }
+
+    /* app name */
+    .app-name {
+      width: 100%;
+      font-family: 'Quicksand';
+      font-size: 40px;
+      background: linear-gradient(to right, rgba(0, 0, 255, 1) 45%, rgba(255, 0, 0, 1) 47%, rgba(0, 255, 0, 1) 50%, rgba(0, 0, 255, 1) 52%, rgba(255, 0, 0, 1) 55%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .container {
+      height: 80%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .container .plant {
+      margin-left: 5%;
+      position: relative;
+      width: 40%;
+    }
+
+    .container .plant img {
+      position: absolute;
+      bottom: 10%;
+      width: 60%;
+      cursor: url('../images/water_cursor.png'), auto;
+      transition: all 1s;
+    }
+
+    .container .plant img:hover {
+      position: absolute;
+      bottom: 20%;
+      width: 80%;
+    }
+
+    .container .login-container {
+      margin-top: 2%;
+      margin-right: 5%;
+      overflow: hidden;
+      position: relative;
+      width: 60%;
+      max-width: 60%;
+    }
+
+    @media only screen and (max-width: 425px){
+      .container {
+        height: 70%;
+      }
+
+      .container .plant {
+        display: none;
+      }
+      
+      .container .login-container {
+        width: 100%;
+        max-width: 100%;
+      }
+    } 
+
+    .login-container .login-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      color: rgba(0, 125, 20, 0.8);
+      transition: all 1s;
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+    }
+
+    .login-form .input-div .label {
+      padding: 1rem;
+    }
+
+    .label span {
+      float: left;
+    }
+
+    .label h5 {
+      margin: 0 0 0 3rem;
+    }
+
+    .login-form .input-div input {
+      padding: 0.8rem;
+      border: 0;
+      border-radius: 2rem;
+      box-shadow: 0 0 5px 5px rgba(100, 255, 100, 0.5);
+    }
+
+    .login-form .sumbit-div .switch-type {
+      margin: 1rem 0; 
+      padding: 0.8rem;
+      border: 0;
+      border-radius: 2rem;
+      box-shadow: 0 0 5px 5px rgba(100, 255, 100, 0.5) inset;
+      cursor: pointer;
+    }
+
+    .login-form .sumbit-div .submit-btn {
+      padding: 0.8rem;
+      border: 0;
+      border-radius: 2rem;
+      box-shadow: 0 0 5px 5px rgba(100, 255, 100, 0.5) inset;
+      cursor: pointer;
+    }
+
+    .login-form span.span-msg {
+      color: rgba(255, 50, 0, 1);
+      width: 50%;
+      margin-top: 1rem;
+      border-radius: 0.5em;
+      text-align: center;
+      background: rgba(255, 200, 0, 0.5);
+      position: relative;
+    }
+
+    .login-form span.span-msg:before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 30%;
+      border-style: solid;
+      border-width: 10px;
+      border-color: transparent transparent rgba(255, 200, 0, 0.5) transparent;
+    }
+  </style>
+</head>
+<body>
+  <div class='app-name' align='center'>
+    awari
+  </div>
+
+	<div class="container">
+		<div class="plant">
+			<img src="/images/plant.svg" alt="plant" class="plant">
+		</div>
+
+    <div class="login-container">
+      <form action="" class="login-form sign-in" method='post' onsubmit="login(event)" style="left: 0;">
+        <img class="avatar" src="/images/avatar.svg" alt="avatar" style="width: 10%;">
+        <h2>Welcome</h2>
+        <div class="input-div one">
+          <div class='label'>
+            <span><i class="fas fa-user"></i></span>
+            <h5>Username</h5>
+          </div>
+          <input type="text" class="input" name="username" placeholder="username"> 
+        </div>
+        <div class="input-div two">
+          <div class='label'>
+            <span><i class=" fas fa-lock"></i></span>
+            <h5>Password</h5>
+          </div>
+          <input type="password" class="input" name="password" placeholder="password">
+        </div>
+        <div class='sumbit-div'>
+          <button type="button" class="switch-type sign-up-btn" onclick="switchType('sign-up')">sign up?</button>
+          <input type="submit" class="submit-btn" value="Login">
+        </div>
+      </form>
+
+      <form action="" class="login-form sign-up" method='post' onsubmit="register(event)" style="right: -100%;">
+        <img class="avatar" src="/images/avatar.svg" alt="avatar" style="width: 10%;">
+        <h2>Welcome</h2>
+        <div class="input-div one">
+          <div class='label'>
+            <span><i class="fas fa-user"></i></span>
+            <h5>Username</h5>
+          </div>
+          <input type="text" class="input" name="username" placeholder="username"> 
+        </div>
+        <div class="input-div two">
+          <div class='label'>
+            <span><i class=" fas fa-lock"></i></span>
+            <h5>Password</h5>
+          </div>
+          <input type="password" class="input" name="password" placeholder="password">
+        </div>
+        <div class="input-div three" align="center">
+          <div class='label'>
+            <span><i class=" fas fa-lock"></i></span>
+            <h5>Re-Enter Password</h5>
+          </div>
+          <input type="password" class="input" name="repassword" placeholder="re-password">
+        </div>
+        <div class='sumbit-div'>
+          <button type="button" class="switch-type sign-in-btn" onclick="switchType('sign-in')">sign in?</button>
+          <input type="submit" class="submit-btn" value="Register">
+        </div>
+      </form>
+    </div>
+	</div>
+  
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script type="text/javascript" src="/javascripts/login.js"></script>
+  <script type="text/javascript">
+    function switchType(option){
+      let signupForm = document.getElementsByClassName('sign-up')[0];
+      let signinForm = document.getElementsByClassName('sign-in')[0];
+
+      if(option.includes('in')){
+        signinForm.style.left = '0';
+        signupForm.style.right = '-100%';
+      } else if(option.includes('up')){
+        signinForm.style.left = '-100%';
+        signupForm.style.right = '0';
+      }
+    }
+  </script>
+</body>
+</html>

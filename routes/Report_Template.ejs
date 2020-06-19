@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report</title>
+
+    <style>
+      .main {
+        width: 640px;
+        padding: 50px;
+        margin: auto;
+        border-top: 1px solid #eee;
+      }
+
+      /* app name */
+      .app-name {
+      	width: 100%;
+        border-top: 1px solid black;
+        font-family: 'Quicksand';
+        text-align: center;
+      }
+
+      #container {
+        margin: 10px;
+        padding: 30px;
+      }
+
+      #container .table {
+        width: 80%;
+        border-collapse: collapse;
+      }
+
+      table, td, th {
+        border-top: 1px solid black;
+      }
+
+      #container ul li {
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='main'>
+      <div class='app-name'>
+        <h1>awari</h1>
+        <img src="https://cdn1.iconfinder.com/data/icons/garden-tools-15/64/watering_can-water-plant-growth-tool-512.png" alt="favicon" style='border-radius: 50%; width: 3rem;'>
+      </div>
+
+      <div id='container'>
+        <h3>Report of <%= tree.name %>(schedule: <%= tree.schedule.time + " every " + tree.schedule.frequency + " day, flow: " + tree.schedule.level %> in the last 7 days:</h3>
+        <ul>
+      	<% for (const [date, value] of Object.entries(tree.data)) { %>
+					<li>
+            <h4>
+              Date: <%= date %>, Watering: <% if(value.water.length < 10){ %>
+                <%= value.water %>
+              <% } else { %>
+                <%= value.water.slice(0, 10) %>
+              <% } %>
+            </h4>
+            <div style='font-size: 14px'>
+              <table class="table">
+                <thead align="center">
+                  <tr class="border-top">
+                    <th scope="col">Time</th>
+                    <th scope="col">Temperature</th>
+                    <th scope="col">Moisture</th>
+                    <th scope="col">Humidity</th>
+                  </tr>
+                </thead>
+                <tbody align="center" class='border-top table-elem'>
+                <% value.sensorData.forEach((item)=>{ %>
+                  <tr>
+                    <th scope="row"><%= item.time %></th>
+                    <td><%= item.temperature %></td>
+                    <td><%= item.moisture %></td>
+                    <td><%= item.humidity %></td>
+                  </tr>
+                <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </li>
+      	<% } %>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report</title>
+
+    <style media="screen">      
+      .main {
+        max-width: 800px;
+        padding: 30px;
+        margin: auto;
+        border-top: 1px solid #eee;
+      }
+
+      /* app name */
+      .app-name {
+        border-top: 1px solid black;
+        font-family: 'Quicksand';
+        text-align: center;
+      }
+
+      #container {
+        margin: 10px;
+        padding: 30px;
+      }
+
+      #container .table {
+        width: 80%;
+        border-collapse: collapse;
+      }
+
+      .border-top {
+        border-top: 1px solid black;
+      }
+
+      #container ul li {
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='main'>
+      <div class='app-name'>
+        <h1>awari</h1>
+        <img src="https://cdn1.iconfinder.com/data/icons/garden-tools-15/64/watering_can-water-plant-growth-tool-512.png" alt="favicon" style='border-radius: 50%; width: 3rem;'>
+      </div>
+
+      <div id='container'>
+        <h3>Temperature, Moisture, and Humidity of <%= tree.name %> in the last 7 days:</h3>
+        <ul>
+          <li>
+            <h4>
+              Date: 27/05/2020, Watering: 2:00
+            </h4>
+            <div style='font-size: 14px'>
+              <table class="table">
+                <thead align="center">
+                  <tr class="border-top">
+                    <th scope="col">Time</th>
+                    <th scope="col">Temperature</th>
+                    <th scope="col">Moisture</th>
+                    <th scope="col">Humidity</th>
+                  </tr>
+                </thead>
+                <tbody align="center" class='border-top table-elem'>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>2</td>
+                    <td>3</td>
+                    <td>4</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
