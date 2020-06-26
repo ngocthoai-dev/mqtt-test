@@ -347,6 +347,8 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
     // console.log(today.getFullYear(), '-', today.getMonth(), '-', today.getDate(), '-', req.body.data.hh, '-', req.body.data.mm, '-', 0);
     let treeName=req.params.treeName, freq=req.body.data.freq, waterLvl=req.body.data.waterLvl;
     let time = req.body.data.hh.padStart(2, "0") + ":" + req.body.data.mm.padStart(2, "0");
+    if(waterLvl == '')
+      waterLvl = 60;
     // console.log(time);
     // set schedule
     db().collection('tree').find({

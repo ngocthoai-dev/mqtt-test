@@ -30,6 +30,7 @@ router.post('/', function(req, res) {
 	let password = req.body.data.password;
 
 	console.log('post login:', req.url);
+  // console.log(username, password);
 	db().collection('user').find({ username: username }).toArray(function(err, user) {
 		if(err) throw err;
 
