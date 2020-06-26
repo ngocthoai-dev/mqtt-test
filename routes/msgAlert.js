@@ -53,7 +53,7 @@ let checkInDangerTree = ()=>{
             if(!humi && tree.data[i].humidity)
               humi = tree.data[i].humidity;
           }
-          if(temp > 30 && mois > 5 && humi > 60){
+          if(temp > 40 && mois > 8 && humi > 60){
             tree.user.forEach((user, i) => {
               db().collection('user').findOne({
                 username: user.split('$')[0],

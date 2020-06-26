@@ -2,7 +2,7 @@
 const db = require('../routes/dbConnection').db;
 
 const mqtt = require('mqtt');
-let mqttClient = mqtt.connect('mqtt:52.163.220.103:1883');
+let mqttClient = mqtt.connect('mqtt:52.187.125.59:1883');
 
 mqttClient.on('connect', function() {
   console.log('mqtt connect!');
@@ -110,7 +110,7 @@ function mqttConnection(){
 
                       if(user.email){
                         sendMsg('guest121019@gmail.com', user.email, function(msg){
-                          console.log(msg);
+                          // console.log(msg);
                         }, 'WARNING: ' + tree.name + '!',
                         ('Dear ' + user.username + ',<br/><br/>' +
                         'the ' + tree.name + ' tree with the temperature: <b>' + valueTemp + '</b>;' + 'the humidity: <b>' + valueHumi + '</b>;<br/><br/>' +
@@ -158,7 +158,7 @@ function mqttConnection(){
 
                       if(user.email){
                         sendMsg('guest121019@gmail.com', user.email, function(msg){
-                          console.log(msg);
+                          // console.log(msg);
                         }, 'WARNING: ' + tree.name + '!',
                         ('Dear ' + user.username + ',<br/><br/>' +
                         'the ' + tree.name + ' tree with the moisture: <b>' + valueMois + '</b>;<br/><br/>' +
@@ -173,7 +173,7 @@ function mqttConnection(){
         } else if(item.device_id.includes(type)){
           let sensorLight='motor.name', dataLight=item.values;
 
-          console.log(dataLight);
+          // console.log(dataLight);
           db().collection('tree').updateMany({
             [sensorLight]: topic,
           }, {

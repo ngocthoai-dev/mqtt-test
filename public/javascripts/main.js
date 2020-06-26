@@ -75,9 +75,11 @@ function tree_schedule_water(evt, treeName){
   let hh=evt.target[1].value, mm=evt.target[2].value, lvl=evt.target[3].value, freq=evt.target[0].value;
   // console.log(evt.target[0].value, "-", evt.target[1].value, "-", evt.target[2].value, "-", evt.target[3].value);
   if(hh == '')
-    hh = '0';
+    hh = '00';
   if(mm == '')
-    mm = '0';
+    mm = '00';
+  if(waterLvl == '')
+    waterLvl = 60;
 
 	postTreeWater({
     freq: freq,
