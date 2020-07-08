@@ -1,5 +1,3 @@
-const { default: swal } = require("sweetalert");
-
 function panel_toggle(idx=0){
   let filterPanel = document.getElementsByClassName('filter-panel')[idx];
   if(filterPanel.style.display === 'none' || filterPanel.style.display === ''){
@@ -80,8 +78,8 @@ function tree_schedule_water(evt, treeName){
     hh = '00';
   if(mm == '')
     mm = '00';
-  if(waterLvl == '')
-    waterLvl = 60;
+  if(lvl == '')
+    lvl = 60;
 
 	postTreeWater({
     freq: freq,
@@ -154,6 +152,8 @@ function tree_manual_water(evt, treeName){
     }
   });
 }
+
+
 function stop_manual_water(evt, treeName){
   evt.preventDefault();
   postTreeWater({
@@ -197,31 +197,6 @@ function getFullyReport(evt, treeName){
   });
 }
 
-function deleteTree(evt, treeName){
-  evt.preventDefault();
-  let user = document.getElementsByClassName('add-password')[0].firstElementChild.value;
-  axios.post('/deleteTree', {
-    treeName: treeName,
-    pass: user, 
-  }).then((res)=>{
-    // console.log(res.data.success);
-    if(res.data.success){
-			swal({
-				title: "Updated!",
-				text: "You have deleted tree " + treeName,
-				icon: "success",
-				button: "Done!",
-			});
-    } else {
-			swal({
-				title: res.data.msg,
-				text: res.msg,
-				icon: "warning",
-				button: "Retry!",
-			});
-    }
-  });
-}
 
 function givePermission(evt, treeName){
   evt.preventDefault();
@@ -269,6 +244,32 @@ function addEmail(evt){
 				text: res.msg,
 				icon: "warning",
 				button: "Retry!",
+			});
+    }
+  });
+}
+
+function deleteTree(evt, treeName){
+  evt.preventDefault();
+  let user = document.getElementsByClassName('add-password')[0].firstElementChild.value;
+  axios.post('/deleteTree', {
+    treeName: treeName,
+    pass: user,
+  }).then((res)=>{
+    // console.log(res.data.success);
+    if(res.data.success){
+			swal({
+				title: "Updated!",
+				text: "You have deleted tree " + treeName,
+				icon: "success",
+				button: "Done!",
+			});
+    } else {
+			swal({
+				title: res.data.msg,
+				text: res.msg,
+				icon: "warning",
+				button: "OK!",
 			});
     }
   });

@@ -89,9 +89,9 @@
 				<form method='post' class="update-tree-form d-flex flex-column align-items-center" onsubmit='updateTree(event)'>
 					<h3 class='text-success'>tree</h3>
 					<i class="fas fa-undo text-success m-2" onClick="update_tree_toggle('adjust')" style='cursor: pointer;'></i>
-					<input type="text" name="temphumi" value="" placeholder="temperature and humidity" class='p-2 m-2'>
-					<input type="text" name="moisture" value="" placeholder="moisture" class='p-2 m-2'>
-					<input type="text" name="motor" value="" placeholder="motor" class='p-2 m-2'>
+					<input type="text" name="temphumi" value="" placeholder="temperature and humidity" class='p-2 m-2' title='Topic Name, e.g: Topic/TempHumi'>
+					<input type="text" name="moisture" value="" placeholder="moisture" class='p-2 m-2' title='Topic Name, e.g: Topic/Mois'>
+					<input type="text" name="motor" value="" placeholder="motor" class='p-2 m-2' title='Topic Name, e.g: Topic/LightD'>
 					<button type="submit" name="button" class='p-2 m-2 btn btn-success'>update</button>
 				</form>
 			</div>
@@ -141,38 +141,47 @@
 			evt.preventDefault();
 			console.log(evt.currentTarget.childNodes[1].textContent, evt.target[0].value, evt.target[1].value, evt.target[2].value);
 			let treeName = evt.currentTarget.childNodes[1].textContent;
-			axios.post('/addSensor', {
-				data: {
-					treeName: treeName,
-					tempHumi: evt.target[0].value,
-					moisture: evt.target[1].value,
-					motor: evt.target[2].value,
-					type: 'update-tree',
-				},
-			}).then((res)=>{
-				if(res.data.success){
-					if(!res.data.msg.localeCompare('add')){
-						let liTag = document.createElement('li');
-						liTag.className = 'list-group-item border-0 p-1 w-100';
-						let btnTag = document.createElement('button');
-						btnTag.className = 'btn btn-outline-info tree-elems w-100';
-						btnTag.type = 'button';
-						btnTag.textContent = treeName;
-						btnTag.onCLick = '';
+			if(treeName == ''){
+				swal({
+					title: "Invalid tree name!",
+					text: "Tree name can not be empty.",
+					icon: "warning",
+					button: "Retry!",
+				});
+			} else {
+				axios.post('/addSensor', {
+					data: {
+						treeName: treeName,
+						tempHumi: evt.target[0].value,
+						moisture: evt.target[1].value,
+						motor: evt.target[2].value,
+						type: 'update-tree',
+					},
+				}).then((res)=>{
+					if(res.data.success){
+						if(!res.data.msg.localeCompare('add')){
+							let liTag = document.createElement('li');
+							liTag.className = 'list-group-item border-0 p-1 w-100';
+							let btnTag = document.createElement('button');
+							btnTag.className = 'btn btn-outline-info tree-elems w-100';
+							btnTag.type = 'button';
+							btnTag.textContent = treeName;
+							btnTag.onCLick = '';
 
-						liTag.appendChild(btnTag);
+							liTag.appendChild(btnTag);
 
-						document.getElementsByClassName('list-tree')[0].appendChild(liTag);
+							document.getElementsByClassName('list-tree')[0].appendChild(liTag);
+						}
+
+						swal({
+							title: "Updated!",
+							text: "You update " + treeName,
+							icon: "success",
+							button: "Thanks!",
+						});
 					}
-
-					swal({
-						title: "Updated!",
-						text: "You update " + treeName,
-						icon: "success",
-						button: "Thanks!",
-					});
-				}
-			});
+				});
+			}
 		}
 	</script>
 </body>

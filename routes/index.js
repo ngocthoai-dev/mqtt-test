@@ -68,7 +68,7 @@ router.get('/intermission', sessionChecker, function(req, res){
 //   // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
 //   args: ['Bruce Wayne']
 // };
-
+//
 // PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
 //   if (err) throw err;
 //   // results is an array consisting of messages collected during execution
@@ -80,6 +80,7 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
   console.log('req from:' + req.url);
   db().collection('tree').find({
     user: req.signedCookies['secid'],
+    isDeleted: false,
   }).toArray(function(err, treeLst){
     if(err) throw err;
     let trees = [], everyTreeWater="YES", lastWatering=new Date('01-01-2020');
@@ -315,12 +316,13 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
   }).toArray(function(err, result){
     if(err) throw err;
 
-    let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater=new Date('01-01-2020'), sensors=[], isWatering=false;
+    let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='NoneTNone', sensors=[], isWatering=false, isDeleted=false;
     result.forEach((tree, i) => {
       temp = tree.currentData.temperature;
       mois = tree.currentData.moisture;
       humi = tree.currentData.humidity;
       sensors = tree.sensor;
+      isDeleted = tree.isDeleted;
       if(tree.motor.value){
         // console.log(tree.motor.value);
         if(tree.motor.value[0] == "1"){
@@ -346,6 +348,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
         isWaterToday: isWaterToday, lastWater: lastWater,
         sensors: sensors,
         isWatering: isWatering,
+        isDeleted: isDeleted,
       },
     });
   });
@@ -575,6 +578,47 @@ router.get('/addSensor', sessionChecker, function(req, res){
   });
 });
 
+router.post('/deleteTree', sessionChecker, function(req, res){
+  let treeName = req.body.treeName, user=req.body.user;
+  let username = req.signedCookies['secid'].split('$')[0];
+  let hashPass = hashing.hash(req.body.pass, { salt: username, rounds: 20 });
+  db().collection('user').find({
+    username: username,
+    password: hashPass,
+  }).toArray((err, users) => {
+    if(err) throw err;
+
+    if(users.length){
+      db().collection('tree').find({
+        user: req.signedCookies['secid'],
+        name: treeName,
+        isDeleted: true,
+      }).toArray(function(err, re) {
+        if(err) console.log (err);
+        console.log(re, re.length);
+        if(re.length){
+          res.send({ success: false, msg: "Tree has been Deleted!" });
+        }
+        else {
+          db().collection('tree').findOneAndUpdate({
+            user: req.signedCookies['secid'],
+            name: treeName,
+          }, {
+            $set: { isDeleted: true, },
+          }, function(err, re) {
+            if(err) throw err;
+            console.log('req');
+            res.send({ success: true });
+          });
+        }
+      });
+    } else {
+      res.send({ success: false, msg: "incorrect password!" });
+    }
+  })
+});
+
+
 router.post('/addSensor', sessionChecker, function(req, res) {
   // console.log('post add sensor', req.url);
   // console.log(req.body.data);
@@ -676,43 +720,6 @@ router.post('/addSensor', sessionChecker, function(req, res) {
     res.send({ success: false, msg: 'Incorrect order!' });
   }
 });
-
-router.post('/deleteTree', sessionChecker, function(req, res){
-  let treeName = req.body.treeName, user=req.body.user;
-  let username = req.signedCookies['secid'].split('$')[0];
-  let hashPass = hashing.hash(req.body.pass, { salt: username, rounds: 20 });
-  db().collection('user').find({
-    username: username,
-    password: hashPass,
-  }).toArray((err, users) => {
-    if(err) throw err;
-
-    if(users.length){
-      db().collection('tree').find({
-        user: req.signedCookies['secid'], 
-        name: treeName,
-        isDeleted: true,
-      }, function(err, re) {
-        if(err) console.log (err);
-        if(re.length)
-          res.send({ success: false, msg: "Tree has been Deleted!" });
-        
-        db().collection('tree').findOneAndUpdate({
-          user: req.signedCookies['secid'], 
-          name: treeName,
-        }, {
-          $set: { isDeleted: true, },
-        }, function(err, re) {
-          if(err) throw err;
-          console.log('req');
-          res.send({ success: true });
-        });
-      });
-    } else {
-      res.send({ success: false, msg: "incorrect password!" });
-    }
-  })
-})
 
 router.post('/givePermission', sessionChecker, function(req, res){
   let treeName=req.body.treeName, user=req.body.user;
