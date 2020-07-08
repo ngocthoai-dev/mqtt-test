@@ -501,41 +501,43 @@ router.get('/report/:treeName', sessionChecker, function(req, res){
   }).toArray(function(err, result){
     if(err) throw err;
     let data = [];
-    let averageTemp=0, averageMois=0, averageHumi=0, cntTemp=0, cntHumi=0, cntMois=0, current=new Date(result[0].data[0].date.toISOString().split('T')[0]);
-    result[0].data.forEach((item, i) => {
-      let itemDate = new Date(item.date.toISOString().split('T')[0]);
-      if(itemDate < current){
-        data.push({
-          date: current,
-          averageTemp: parseInt(averageTemp/cntTemp),
-          averageMois: parseFloat(averageMois/cntMois),
-          averageHumi: parseInt(averageHumi/cntHumi),
-        });
-        current = itemDate;
-        averageTemp = item.temperature ? item.temperature : 0;
-        averageMois = item.moisture ? item.moisture : 0;
-        averageHumi = item.humidity ? item.humidity : 0;
-        cntTemp=0;
-        cntHumi=0;
-        cntMois=0;
-      } else {
-        averageTemp += item.temperature ? item.temperature : 0;
-        averageMois += item.moisture ? item.moisture : 0;
-        averageHumi += item.humidity ? item.humidity : 0;
-      }
-      if(item.temperature)
-        cntTemp++;
-      if(item.moisture)
-        cntMois++;
-      if(item.humidity)
-        cntHumi++;
-    });
-    data.push({
-      date: current,
-      averageTemp: parseInt(averageTemp/cntTemp),
-      averageMois: parseFloat(averageMois/cntMois),
-      averageHumi: parseInt(averageHumi/cntHumi),
-    });
+    if(result.length > 1){
+      let averageTemp=0, averageMois=0, averageHumi=0, cntTemp=0, cntHumi=0, cntMois=0, current=new Date(result[0].data[0].date.toISOString().split('T')[0]);
+      result[0].data.forEach((item, i) => {
+        let itemDate = new Date(item.date.toISOString().split('T')[0]);
+        if(itemDate < current){
+          data.push({
+            date: current,
+            averageTemp: parseInt(averageTemp/cntTemp),
+            averageMois: parseFloat(averageMois/cntMois),
+            averageHumi: parseInt(averageHumi/cntHumi),
+          });
+          current = itemDate;
+          averageTemp = item.temperature ? item.temperature : 0;
+          averageMois = item.moisture ? item.moisture : 0;
+          averageHumi = item.humidity ? item.humidity : 0;
+          cntTemp=0;
+          cntHumi=0;
+          cntMois=0;
+        } else {
+          averageTemp += item.temperature ? item.temperature : 0;
+          averageMois += item.moisture ? item.moisture : 0;
+          averageHumi += item.humidity ? item.humidity : 0;
+        }
+        if(item.temperature)
+          cntTemp++;
+        if(item.moisture)
+          cntMois++;
+        if(item.humidity)
+          cntHumi++;
+      });
+      data.push({
+        date: current,
+        averageTemp: parseInt(averageTemp/cntTemp),
+        averageMois: parseFloat(averageMois/cntMois),
+        averageHumi: parseInt(averageHumi/cntHumi),
+      });
+    }
 
     // console.log(data);
     res.render('../views/report', { tree: { name: req.params.treeName, data: data } });
