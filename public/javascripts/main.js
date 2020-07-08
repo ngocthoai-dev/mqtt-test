@@ -96,10 +96,19 @@ function tree_schedule_water(evt, treeName){
           icon: "success",
           button: "Done!",
         });
+      } 
+      else if(freq == 1) {
+        swal({
+          title: "Set Schedule!",
+          text: "You set schedule on tree " + treeName + " at " + hh + ":" + mm + " with " + lvl + " ml everyday",
+          icon: "success",
+          button: "Done!",
+        });
+
       } else {
         swal({
           title: "Set Schedule!",
-          text: "You set schedule on tree " + treeName + " region; In " + hh + ":" + mm + " with " + lvl + " every " + freq + " days",
+          text: "You set schedule on tree " + treeName + " at " + hh + ":" + mm + " with " + lvl + " ml every " + freq + " days",
           icon: "success",
           button: "Done!",
         });
