@@ -13,8 +13,8 @@ class Net(Module):
     def __init__(self, inputSize, outputSize):
         super(Net, self).__init__()
         self.actifunc = torch.nn.ReLU()
-        self.hidden = torch.nn.Linear(inputSize, inputSize * 2)
-        self.output = torch.nn.Linear(inputSize * 2, outputSize)
+        self.hidden = torch.nn.Linear(inputSize, inputSize)
+        self.output = torch.nn.Linear(inputSize, outputSize)
 
 
     def forward(self, x):
@@ -67,7 +67,7 @@ def train(X, y, savePath, epochs=10000, learningRate=0.001):
         if len(losses) > 10 and abs(losses[-1]-losses[-10]) < 10e-5:
             break
 
-        # print('epoch {}, loss {}'.format(epoch, loss.item()))
+        #print('epoch {}, loss {}'.format(epoch, loss.item()))
 
     torch.save(model, savePath)
 
@@ -102,5 +102,5 @@ if __name__ == '__main__':
         print('Train Successfully!')
     elif sys.argv[1] == 'eval':
         # date = datetime.timestamp(datetime.strptime(sys.argv[2], "%Y-%m-%d %H:%M:%S"))
-        sample = np.array(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth'))[0], dtype=np.float32)
-        print(predict(sample, os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))
+        #sample = np.array(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth'))[0], dtype=np.float32)
+        print(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), 'save/weight2.pth'))#os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))
