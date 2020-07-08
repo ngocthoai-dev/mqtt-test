@@ -660,6 +660,43 @@ router.post('/addSensor', sessionChecker, function(req, res) {
   }
 });
 
+router.post('/deleteTree', sessionChecker, function(req, res){
+  let treeName = req.body.treeName, user=req.body.user;
+  let username = req.signedCookies['secid'].split('$')[0];
+  let hashPass = hashing.hash(req.body.pass, { salt: username, rounds: 20 });
+  db().collection('user').find({
+    username: username,
+    password: hashPass,
+  }).toArray((err, users) => {
+    if(err) throw err;
+
+    if(users.length){
+      db().collection('tree').find({
+        user: req.signedCookies['secid'], 
+        name: treeName,
+        isDeleted: true,
+      }, function(err, re) {
+        if(err) console.log (err);
+        if(re.length)
+          res.send({ success: false, msg: "Tree has been Deleted!" });
+        
+        db().collection('tree').findOneAndUpdate({
+          user: req.signedCookies['secid'], 
+          name: treeName,
+        }, {
+          $set: { isDeleted: true, },
+        }, function(err, re) {
+          if(err) throw err;
+          console.log('req');
+          res.send({ success: true });
+        });
+      });
+    } else {
+      res.send({ success: false, msg: "incorrect password!" });
+    }
+  })
+})
+
 router.post('/givePermission', sessionChecker, function(req, res){
   let treeName=req.body.treeName, user=req.body.user;
   db().collection('user').find({
