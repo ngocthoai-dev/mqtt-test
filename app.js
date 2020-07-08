@@ -19,7 +19,7 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-hashing = require('./routes/custom_hashing');
+let hashing = require('./routes/custom_hashing');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session)
 app.use(session({
