@@ -54,10 +54,25 @@ router.get('/sendMsg', function(req, res){
   });
 });
 
-
 // testing intermission page
 router.get('/intermission', sessionChecker, function(req, res){
   res.render('../views/intermission', { tree: { name: 'test' } });
+});
+
+
+const { PythonShell } = require('python-shell');
+let options = {
+  mode: 'text',
+  pythonPath: 'python3',
+  // pythonOptions: ['u'],
+  // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
+  args: ['Bruce Wayne']
+};
+
+PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
+  if (err) throw err;
+  // results is an array consisting of messages collected during execution
+  console.log('results: %j', results);
 });
 
 
@@ -464,9 +479,9 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
 
             // console.log(re);
             let data = [], value="0";
-            if(flow > 60*10){
+            if(flow > 60*3){
               value = "255";
-            } else if(flow > 60*5){
+            } else if(flow > 60*1.5){
               value = "180";
             } else {
               value = "100";
@@ -501,41 +516,43 @@ router.get('/report/:treeName', sessionChecker, function(req, res){
   }).toArray(function(err, result){
     if(err) throw err;
     let data = [];
-    let averageTemp=0, averageMois=0, averageHumi=0, cntTemp=0, cntHumi=0, cntMois=0, current=new Date(result[0].data[0].date.toISOString().split('T')[0]);
-    result[0].data.forEach((item, i) => {
-      let itemDate = new Date(item.date.toISOString().split('T')[0]);
-      if(itemDate < current){
-        data.push({
-          date: current,
-          averageTemp: parseInt(averageTemp/cntTemp),
-          averageMois: parseFloat(averageMois/cntMois),
-          averageHumi: parseInt(averageHumi/cntHumi),
-        });
-        current = itemDate;
-        averageTemp = item.temperature ? item.temperature : 0;
-        averageMois = item.moisture ? item.moisture : 0;
-        averageHumi = item.humidity ? item.humidity : 0;
-        cntTemp=0;
-        cntHumi=0;
-        cntMois=0;
-      } else {
-        averageTemp += item.temperature ? item.temperature : 0;
-        averageMois += item.moisture ? item.moisture : 0;
-        averageHumi += item.humidity ? item.humidity : 0;
-      }
-      if(item.temperature)
-        cntTemp++;
-      if(item.moisture)
-        cntMois++;
-      if(item.humidity)
-        cntHumi++;
-    });
-    data.push({
-      date: current,
-      averageTemp: parseInt(averageTemp/cntTemp),
-      averageMois: parseFloat(averageMois/cntMois),
-      averageHumi: parseInt(averageHumi/cntHumi),
-    });
+    if(result.length > 1){
+      let averageTemp=0, averageMois=0, averageHumi=0, cntTemp=0, cntHumi=0, cntMois=0, current=new Date(result[0].data[0].date.toISOString().split('T')[0]);
+      result[0].data.forEach((item, i) => {
+        let itemDate = new Date(item.date.toISOString().split('T')[0]);
+        if(itemDate < current){
+          data.push({
+            date: current,
+            averageTemp: parseInt(averageTemp/cntTemp),
+            averageMois: parseFloat(averageMois/cntMois),
+            averageHumi: parseInt(averageHumi/cntHumi),
+          });
+          current = itemDate;
+          averageTemp = item.temperature ? item.temperature : 0;
+          averageMois = item.moisture ? item.moisture : 0;
+          averageHumi = item.humidity ? item.humidity : 0;
+          cntTemp=0;
+          cntHumi=0;
+          cntMois=0;
+        } else {
+          averageTemp += item.temperature ? item.temperature : 0;
+          averageMois += item.moisture ? item.moisture : 0;
+          averageHumi += item.humidity ? item.humidity : 0;
+        }
+        if(item.temperature)
+          cntTemp++;
+        if(item.moisture)
+          cntMois++;
+        if(item.humidity)
+          cntHumi++;
+      });
+      data.push({
+        date: current,
+        averageTemp: parseInt(averageTemp/cntTemp),
+        averageMois: parseFloat(averageMois/cntMois),
+        averageHumi: parseInt(averageHumi/cntHumi),
+      });
+    }
 
     // console.log(data);
     res.render('../views/report', { tree: { name: req.params.treeName, data: data } });
