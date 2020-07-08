@@ -7,6 +7,7 @@ import pandas as pd
 import torch
 from torch.nn import Module
 from torch.autograd import Variable
+import os
 
 class Net(Module):
     def __init__(self, inputSize, outputSize):
@@ -66,7 +67,7 @@ def train(X, y, savePath, epochs=10000, learningRate=0.001):
         if len(losses) > 10 and abs(losses[-1]-losses[-10]) < 10e-5:
             break
 
-        print('epoch {}, loss {}'.format(epoch, loss.item()))
+        # print('epoch {}, loss {}'.format(epoch, loss.item()))
 
     torch.save(model, savePath)
 
@@ -83,22 +84,13 @@ def predict(sample, savePath):
     return predicted
 
 if __name__ == '__main__':
+    print('test')
     if sys.argv[1] == 'train':
-        df = pd.read_csv(r'./dataset.csv')
-        df = df.drop(['Record'], axis=1)
-        df['DateTime'] = np.vectorize(lambda x: datetime.timestamp(datetime.strptime(x, "%Y-%m-%d %H:%M:%S")))(df['DateTime'])
-        df['Water'] = (20 - df['Tsoil.C.hummock']) * 60
+        df = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dataset.csv'))
+        df = df.drop(['Record', 'Tsoil.C.hummock'], axis=1)
+        df['Water'] = (20 - df['Tair.C']) * 60
 
-        X = df['DateTime']
-        X = np.array(X.values, dtype=np.float32)
-        X = X.reshape(-1, 1)
-
-        y = df[['Tsoil.C.hummock', 'Tair.C', 'RH.percent']].values#[i+j for (i, j) in x_values]
-        y = np.array(y, dtype=np.float32)
-
-        train(X, y, r'./save/weight1.pth', epochs=100000, learningRate=0.001)
-
-        X = df[['Tsoil.C.hummock', 'Tair.C', 'RH.percent']]#[(i, j) for j in range(50) for i in range(50)]
+        X = df[['Tair.C', 'RH.percent']]#[(i, j) for j in range(50) for i in range(50)]
         X = np.array(X.values, dtype=np.float32)
         #x_train = x_train.reshape(-1, x_train.shape[1])
 
@@ -106,8 +98,9 @@ if __name__ == '__main__':
         y = np.array(y, dtype=np.float32)
         y = y.reshape(-1, 1)
 
-        train(X, y, r'./save/weight2.pth', epochs=100000, learningRate=0.01)
+        train(X, y, os.path.join(os.path.dirname(__file__), 'save/weight2.pth'), epochs=100000, learningRate=0.01)
+        print('Train Successfully!')
     elif sys.argv[1] == 'eval':
-        date = datetime.timestamp(datetime.strptime(sys.argv[2], "%Y-%m-%d %H:%M:%S"))
-        sample = np.array(predict(np.array(date, dtype=np.float32).reshape(-1,1), r'./save/weight1.pth')[0], dtype=np.float32)
-        print(predict(sample, r'./save/weight2.pth'))
+        # date = datetime.timestamp(datetime.strptime(sys.argv[2], "%Y-%m-%d %H:%M:%S"))
+        sample = np.array(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth'))[0], dtype=np.float32)
+        print(predict(sample, os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))
