@@ -103,4 +103,4 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'eval':
         # date = datetime.timestamp(datetime.strptime(sys.argv[2], "%Y-%m-%d %H:%M:%S"))
         #sample = np.array(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth'))[0], dtype=np.float32)
-        print(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), 'save/weight2.pth'))#os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))
+        print(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))
