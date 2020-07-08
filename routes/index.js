@@ -60,20 +60,20 @@ router.get('/intermission', sessionChecker, function(req, res){
 });
 
 
-const { PythonShell } = require('python-shell');
-let options = {
-  mode: 'text',
-  pythonPath: 'python3',
-  // pythonOptions: ['u'],
-  // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
-  args: ['Bruce Wayne']
-};
+// const { PythonShell } = require('python-shell');
+// let options = {
+//   mode: 'text',
+//   pythonPath: 'python3',
+//   // pythonOptions: ['u'],
+//   // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
+//   args: ['Bruce Wayne']
+// };
 
-PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
-  if (err) throw err;
-  // results is an array consisting of messages collected during execution
-  console.log('results: %j', results);
-});
+// PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
+//   if (err) throw err;
+//   // results is an array consisting of messages collected during execution
+//   console.log('results: %j', results);
+// });
 
 
 router.get(['/', '/home'], sessionChecker, function(req, res) {
