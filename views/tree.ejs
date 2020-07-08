@@ -17,7 +17,7 @@
           <h4 class='text-success'>Schedule Watering</h4>
         </div>
 				<form class="" method="post" onsubmit='<%= 'tree_schedule_water(event, "' + tree.name + '")' %>'>
-					<select class="custom-select freq-select" title='frequency of watering'>
+					<select class="custom-select freq-select" title='frequency of watering' onchange="checkFreq()">
 						<option selected value="0">No Schedule</option>
 						<option value="1">Everyday</option>
 						<option value="2">Every 2 Days</option>
@@ -25,11 +25,11 @@
 						<option value="7">Every Weeks</option>
 					</select>
 					<div class="time-watering mt-3">
-						<input type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour" title='hour to watering, default: 0'>
-						<input type="number" name="" min="0" max="60" value="" class='p-2 mm' placeholder="minute" title='minute to watering, default: 0'>
+						<input readonly id='schedule-hh' type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour" title='hour to watering, default: 0'>
+						<input readonly id='schedule-mm' type="number" name="" min="0" max="60" value="" class='p-2 mm' placeholder="minute" title='minute to watering, default: 0'>
 					</div>
 					<div class="time-watering mt-3">
-						<input type="number" name="" min="0" max="" value="" class='p-2 ml' placeholder="water level" title='level water needed for automation, default: 60'>
+						<input readonly id='schedule-lvl' type="number" name="" min="0" max="10000" value="" class='p-2 ml' placeholder="water level" title='level water needed for automation, default: 60'>
 						<input type="text" name="" value="ml" class='p-2' readonly>
 					</div>
 					<div class="filter-submit w-100 pt-3" align='center'>
@@ -107,8 +107,8 @@
 					</div>
 					<span class='text-success'>Flow</span>
 					<div class="time-watering my-3">
-						<input type="number" name="" min="0" value="" class='p-2 hh' placeholder="speed" title='level needed, default: 60'>
-						<input type="text" name="" value="ml/s" class='p-2' readonly>
+						<input type="number" name="" min="0" max="10000" value="" class='p-2 hh' placeholder="speed" title='level needed, default: 60'>
+						<input type="text" name="" value="ml" class='p-2' readonly>
 					</div>
 					<div class="filter-submit w-100 pt-3" align='center'>
 						<button type="submit" name="FilterButton" class="btn btn-success filter-button" title='water now'><i class="fas fas fa-tint text-white"></i></button>

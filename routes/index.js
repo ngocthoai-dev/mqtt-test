@@ -82,11 +82,10 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
     user: req.signedCookies['secid'],
     isDeleted: false,
   }).toArray(function(err, treeLst){
-    if(err) throw err;
+    if(err) console.log(err);
     let trees = [], everyTreeWater="YES", lastWatering=new Date('01-01-2020');
 
     treeLst.forEach((tree) => {
-      trees.push(tree.name);
       if(tree.water){
         Object.keys(tree.water).forEach((key)=>{
           if(new Date(key) < new Date()){
@@ -98,9 +97,18 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
         });
       }
     });
-    console.log(trees);
 
-    res.render('../views/index', { data: trees, everyTreeWater: everyTreeWater, lastWatering: lastWatering });
+    db().collection('tree').find({
+      user: req.signedCookies['secid'],
+    }).toArray(function(err, treeLst){
+      if(err) console.log(err);
+
+      treeLst.forEach((tree) => {
+        trees.push(tree.name);
+      });
+
+      res.render('../views/index', { data: trees, everyTreeWater: everyTreeWater, lastWatering: lastWatering });
+    });
   });
 });
 
@@ -127,7 +135,7 @@ router.post('/operation/filterTreeList', sessionChecker, function(req, res, next
   if (humidityMaxValue == '')
     humidityMaxValue = Number.MAX_SAFE_INTEGER;
 
-  console.log(temperatureMinValue, temperatureMaxValue, moistureMinValue, moistureMaxValue, humidityMinValue, humidityMaxValue);
+  // console.log(temperatureMinValue, temperatureMaxValue, moistureMinValue, moistureMaxValue, humidityMinValue, humidityMaxValue);
 
   db().collection('tree').find({
     name: { "$regex": req.body.data.TreeName, "$options": "i" },
@@ -142,7 +150,7 @@ router.post('/operation/filterTreeList', sessionChecker, function(req, res, next
     treeLst.forEach((tree) => {
       trees.push(tree.name);
     });
-    console.log(trees);
+    // console.log(trees);
     res.send(trees);
   });
 });
