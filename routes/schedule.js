@@ -28,9 +28,9 @@ function wateringSchedule(schedule, treeName, users, level) {
     // console.log(res);
     let data = [], value="0", flow=res.value.schedule.level;
     var motor=res.value.motor.name;
-    if(flow > 60*10){
+    if(flow > 60*3){
       value = "255";
-    } else if(flow > 60*5){
+    } else if(flow > 60*1.5){
       value = "180";
     } else {
       value = "100";

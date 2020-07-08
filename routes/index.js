@@ -54,10 +54,25 @@ router.get('/sendMsg', function(req, res){
   });
 });
 
-
 // testing intermission page
 router.get('/intermission', sessionChecker, function(req, res){
   res.render('../views/intermission', { tree: { name: 'test' } });
+});
+
+
+const { PythonShell } = require('python-shell');
+let options = {
+  mode: 'text',
+  pythonPath: 'python3',
+  // pythonOptions: ['u'],
+  // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
+  args: ['Bruce Wayne']
+};
+
+PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
+  if (err) throw err;
+  // results is an array consisting of messages collected during execution
+  console.log('results: %j', results);
 });
 
 
@@ -464,9 +479,9 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
 
             // console.log(re);
             let data = [], value="0";
-            if(flow > 60*10){
+            if(flow > 60*3){
               value = "255";
-            } else if(flow > 60*5){
+            } else if(flow > 60*1.5){
               value = "180";
             } else {
               value = "100";

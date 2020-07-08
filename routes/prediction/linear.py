@@ -61,7 +61,7 @@ def train(X, y, epochs=10000, learningRate=0.001):
         if abs(loss-prevLoss) < 10e-6:
             break
 
-        # print('epoch {}, loss {}'.format(epoch, loss.item()))
+        print('epoch {}, loss {}'.format(epoch, loss.item()))
 
     torch.save(model, r'./save/weight.pth')
 
@@ -77,14 +77,18 @@ def predict(sample):
 
     return predicted
 
+import sys
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    print(args)
 
-x_values = [(i, j) for j in range(50) for i in range(50)]
-x_train = np.array(x_values, dtype=np.float32)
-x_train = x_train.reshape(-1, 2)
-
-y_values = [i+j for (i, j)in x_values]
-y_train = np.array(y_values, dtype=np.float32)
-y_train = y_train.reshape(-1, 1)
-
-model = train(x_train,y_train)
-print(predict(x_train[1]))
+# x_values = [(i, j) for j in range(50) for i in range(50)]
+# x_train = np.array(x_values, dtype=np.float32)
+# x_train = x_train.reshape(-1, 2)
+#
+# y_values = [i+j for (i, j)in x_values]
+# y_train = np.array(y_values, dtype=np.float32)
+# y_train = y_train.reshape(-1, 1)
+#
+# model = train(x_train,y_train)
+# print(predict(x_train[1]))

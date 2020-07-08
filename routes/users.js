@@ -81,7 +81,7 @@ router.post('/', function(req, res) {
 		        httpOnly: true, // The cookie only accessible by the web server
 		        signed: true // Indicates cookie should be signed
 			    }
-			    req.session.user = hashing.hash(username, {salt: username, rounds: 20});
+			    req.session.user = hashing.hash(username, { salt: username, rounds: 20 });
 					res.cookie("secid", hashing.hash(username, {salt: username, rounds: 20}), options);
 					res.send({ success: true });
 					console.log('new user from:', req.url);
