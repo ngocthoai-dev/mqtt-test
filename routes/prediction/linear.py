@@ -13,12 +13,14 @@ class Net(Module):
     def __init__(self, inputSize, outputSize):
         super(Net, self).__init__()
         self.actifunc = torch.nn.ReLU()
-        self.hidden = torch.nn.Linear(inputSize, inputSize * 2)
-        self.output = torch.nn.Linear(inputSize * 2, outputSize)
+        self.hidden1 = torch.nn.Linear(inputSize, inputSize * 2)
+        self.hidden2 = torch.nn.Linear(inputSize * 2, inputSize)
+        self.output = torch.nn.Linear(inputSize, outputSize)
 
 
     def forward(self, x):
-        x = self.actifunc(self.hidden(x))
+        x = self.actifunc(self.hidden1(x))
+        x = self.actifunc(self.hidden2(x))
         out = self.actifunc(self.output(x))
 
         return out
