@@ -358,7 +358,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     let lvlPrediction = dataInNex5Days();
     Object.keys(lvlPrediction).forEach((key, i) => {
       lvlPrediction[key] = {
-        lvl: lvlPrediction[key].predLvl[0].substr(1, lvlPrediction[key].predLvl[0].length-2),
+        lvl: parseInt(lvlPrediction[key].predLvl[0].substr(1, lvlPrediction[key].predLvl[0].length-2)),
       }
     });
 

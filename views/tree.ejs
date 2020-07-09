@@ -227,7 +227,13 @@
 
 		    let temp = freqSelect.value;
 		    if(temp > 4){
-		      temp = 5;
+					temp = 4;
+					<% Object.keys(tree.lvlPrediction).forEach((key)=>{ %>
+						// console.log('<%= key %>'.split('-')[2], new Date().getDate() + parseInt(temp), '<%= key %>'.split('-')[2] == new Date().getDate() + parseInt(temp));
+						if(parseInt('<%= key %>'.split('-')[2]) > parseInt(temp)){
+							temp = parseInt('<%= key %>'.split('-')[2]);
+						}
+					<% }); %>
 		    }
 				<% Object.keys(tree.lvlPrediction).forEach((key)=>{ %>
 					// console.log('<%= key %>'.split('-')[2], new Date().getDate() + parseInt(temp), '<%= key %>'.split('-')[2] == new Date().getDate() + parseInt(temp));
