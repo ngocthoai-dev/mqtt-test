@@ -281,17 +281,3 @@ function deleteTree(evt, treeName){
     }
   });
 }
-
-
-var freqSelect = document.getElementsByClassName('freq-select')[0], scheHH = document.getElementById('schedule-hh'), scheMM = document.getElementById('schedule-mm'), scheLVL = document.getElementById('schedule-lvl');
-function checkFreq(){
-  if(freqSelect.value > 0){
-    scheHH.readOnly = false;
-    scheMM.readOnly = false;
-    scheLVL.readOnly = false;
-  } else {
-    scheHH.readOnly = true;
-    scheMM.readOnly = true;
-    scheLVL.readOnly = true;
-  }
-}

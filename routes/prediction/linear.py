@@ -13,13 +13,15 @@ class Net(Module):
     def __init__(self, inputSize, outputSize):
         super(Net, self).__init__()
         self.actifunc = torch.nn.ReLU()
-        self.hidden = torch.nn.Linear(inputSize, inputSize * 2)
-        self.output = torch.nn.Linear(inputSize * 2, outputSize)
+        self.hidden1 = torch.nn.Linear(inputSize, inputSize * 2)
+        self.hidden2 = torch.nn.Linear(inputSize * 2, inputSize)
+        self.output = torch.nn.Linear(inputSize, outputSize)
 
 
     def forward(self, x):
-        hidden = self.actifunc(self.hidden(x))
-        out = self.actifunc(self.output(hidden))
+        x = self.actifunc(self.hidden1(x))
+        x = self.actifunc(self.hidden2(x))
+        out = self.actifunc(self.output(x))
 
         return out
 
@@ -84,11 +86,13 @@ def predict(sample, savePath):
     return predicted
 
 if __name__ == '__main__':
-    print('test')
     if sys.argv[1] == 'train':
         df = pd.read_csv(os.path.join(os.path.dirname(__file__), 'dataset.csv'))
         df = df.drop(['Record', 'Tsoil.C.hummock'], axis=1)
-        df['Water'] = (20 - df['Tair.C']) * 60
+
+        df = df[df['Tair.C'] > 0]
+        df['Tair.C'] += 15
+        df['Water'] = np.vectorize(max)(0,df['Tair.C'] - 25) * 60# + np.vectorize(max)(0, 60 - df['RH.percent']) * 10# + 60 - df['RH.percent']) * 30
 
         X = df[['Tair.C', 'RH.percent']]#[(i, j) for j in range(50) for i in range(50)]
         X = np.array(X.values, dtype=np.float32)
@@ -98,9 +102,9 @@ if __name__ == '__main__':
         y = np.array(y, dtype=np.float32)
         y = y.reshape(-1, 1)
 
-        train(X, y, os.path.join(os.path.dirname(__file__), 'save/weight2.pth'), epochs=100000, learningRate=0.01)
+        train(X, y, os.path.join(os.path.dirname(__file__), 'save/weight2.pth'), epochs=100000, learningRate=0.001)
         print('Train Successfully!')
     elif sys.argv[1] == 'eval':
         # date = datetime.timestamp(datetime.strptime(sys.argv[2], "%Y-%m-%d %H:%M:%S"))
-        sample = np.array(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth'))[0], dtype=np.float32)
-        print(predict(sample, os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))
+        # sample = np.array(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth'))[0], dtype=np.float32)
+        print(predict(np.array([sys.argv[2], sys.argv[3]], dtype=np.float32), os.path.join(os.path.dirname(__file__), 'save/weight2.pth')))

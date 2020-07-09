@@ -10,6 +10,7 @@ const path = require('path');
 // secured id
 const hashing = require('../routes/custom_hashing');
 const secid = require('../routes/custom_hashing').getSecId();
+const dataInNex5Days = require('../routes/prediction').getDataInNext5Days;
 
 // connect db
 const db = require('../routes/dbConnection').db;
@@ -46,7 +47,6 @@ var msgAlert = require('../routes/msgAlert').checkInDangerTree;
 // routing section
 let router = express.Router();
 
-
 router.get('/sendMsg', function(req, res){
   console.log('sendMsg');
   msgAlert.sendMsg("guest121019@gmail.com", "tri.vo1999@hcmut.edu.vn", function(res){
@@ -59,8 +59,6 @@ router.get('/intermission', sessionChecker, function(req, res){
   res.render('../views/intermission', { tree: { name: 'test' } });
 });
 
-
-const request = require('request');
 
 // get private
 // var os = require('os');
@@ -84,106 +82,6 @@ const request = require('request');
 //     ++alias;
 //   });
 // });
-
-const { PythonShell } = require('python-shell');
-let options = {
-  mode: 'text',
-  pythonPath: 'python3',
-  // pythonOptions: ['u'],
-  // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
-  args: ['train']
-};
-
-PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
-  if (err) throw err;
-  // results is an array consisting of messages collected during execution
-  console.log('results: %j', results);
-});
-
-
-const publicIp = require('public-ip');
-var next5days;
-async function crawlWeather(){
-  // console.log(await publicIp.v4());
-  //=> '46.5.21.123'
-  let url = 'https://api.hackertarget.com/geoip/?q=' + await publicIp.v4();
-  request(await url, function(err, response, body){
-    if(err) console.log(err);
-    else {
-      // console.log(body.split('\n'));
-      let info = body.split('\n'), city;
-      if(info.length != 6){
-        console.log('error ip');
-        return;
-      }
-      info.forEach((item, i) => {
-        if(item.split(': ')[0] == 'City'){
-          city = item.split(': ')[1];
-          return;
-        }
-      });
-
-      let api = '9559a25fcb2825e55c5af3b867369b67';
-      // http://api.openweathermap.org/data/2.5/forecast?q=Ho%20Chi%20Minh%20City&mode=json&appid=9559a25fcb2825e55c5af3b867369b67
-      let url = 'http://api.openweathermap.org/data/2.5/forecast?q=' + city + '&units=metric&mode=json&appid=' + api;
-
-      request(url, function(err, response, body){
-        console.log(url);
-        if(err) console.log(err);
-        else {
-          next5days = JSON.parse(body).list;
-          // console.log(next5days);
-          var dataInNex5Days = {};
-          next5days.forEach((item, i) => {
-            key = item.dt_txt.split(' ')[0];
-            if(dataInNex5Days[key] == undefined){
-              dataInNex5Days[item.dt_txt.split(' ')[0]] = {
-                temp: item.main.temp,
-                humi: item.main.humidity,
-                cnt: 1,
-              }
-            } else {
-              dataInNex5Days[key] = {
-                temp: (dataInNex5Days[key].temp + item.main.temp),
-                humi: (dataInNex5Days[key].humi + item.main.humidity),
-                cnt: (dataInNex5Days[key].cnt + 1),
-              }
-            }
-          });
-
-          async function temp(){
-            Object.keys(dataInNex5Days).forEach((key) => {
-              dataInNex5Days[key].temp = dataInNex5Days[key].temp/dataInNex5Days[key].cnt;
-              dataInNex5Days[key].humi = dataInNex5Days[key].humi/dataInNex5Days[key].cnt;
-
-              let options = {
-                mode: 'text',
-                pythonPath: 'python3',
-                // pythonOptions: ['u'],
-                // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
-                args: ['eval', dataInNex5Days[key].temp, dataInNex5Days[key].humi]
-              };
-
-              PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, function (err, results) {
-                if (err) console.log(err);
-                // results is an array consisting of messages collected during execution
-                console.log('results: %j', results);
-                dataInNex5Days[key].predLvl = results;
-              });
-            });
-          };
-
-          temp().then(()=>{
-            console.log(dataInNex5Days);
-          });
-        }
-      });
-    }
-  });
-}
-crawlWeather();
-setInterval(crawlWeather, 1000*60*60*24);
-
 
 router.get(['/', '/home'], sessionChecker, function(req, res) {
   console.log('req from:' + req.url);
@@ -457,7 +355,14 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     });
     // console.log(sensors);
     // console.log(req.params.treeName, isWatering, lastWater);
+    let lvlPrediction = dataInNex5Days();
+    Object.keys(lvlPrediction).forEach((key, i) => {
+      lvlPrediction[key] = {
+        lvl: lvlPrediction[key].predLvl[0].substr(1, lvlPrediction[key].predLvl[0].length-2),
+      }
+    });
 
+    console.log(lvlPrediction);
     res.render('../views/tree', {
       tree: {
         name: treeName,
@@ -466,6 +371,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
         sensors: sensors,
         isWatering: isWatering,
         isDeleted: isDeleted,
+        lvlPrediction: lvlPrediction,
       },
     });
   });

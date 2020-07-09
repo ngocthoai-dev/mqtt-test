@@ -107,7 +107,7 @@
 					</div>
 					<span class='text-success'>Flow</span>
 					<div class="time-watering my-3">
-						<input type="number" name="" min="0" max="10000" value="" class='p-2 hh' placeholder="speed" title='level needed, default: 60'>
+						<input type="number" name="" min="0" max="10000" value="" class='p-2 hh' placeholder="speed" title='level needed, default: 60' id='manual-lvl'>
 						<input type="text" name="" value="ml" class='p-2' readonly>
 					</div>
 					<div class="filter-submit w-100 pt-3" align='center'>
@@ -211,6 +211,37 @@
 			docLastwater=document.getElementsByClassName('text-lastwater')[0], docWater=document.getElementsByClassName('watering')[0];
 
 		let treeName = '<%= tree.name %>';
+
+		<% Object.keys(tree.lvlPrediction).forEach((key)=>{ %>
+			if('<%= key %>'.split('-')[2] == new Date().getDate()){
+				document.getElementById('manual-lvl').setAttribute('placeholder', 'water level: <%= tree.lvlPrediction[key].lvl %>');
+			}
+		<% }); %>
+
+		var freqSelect = document.getElementsByClassName('freq-select')[0], scheHH = document.getElementById('schedule-hh'), scheMM = document.getElementById('schedule-mm'), scheLVL = document.getElementById('schedule-lvl');
+		function checkFreq(){
+		  if(freqSelect.value > 0){
+		    scheHH.readOnly = false;
+		    scheMM.readOnly = false;
+		    scheLVL.readOnly = false;
+
+		    let temp = freqSelect.value;
+		    if(temp > 4){
+		      temp = 5;
+		    }
+				<% Object.keys(tree.lvlPrediction).forEach((key)=>{ %>
+					// console.log('<%= key %>'.split('-')[2], new Date().getDate() + parseInt(temp), '<%= key %>'.split('-')[2] == new Date().getDate() + parseInt(temp));
+					if('<%= key %>'.split('-')[2] == parseInt(new Date().getDate()) + parseInt(temp)){
+						// console.log(scheLVL);
+						scheLVL.setAttribute('placeholder', 'water level: <%= tree.lvlPrediction[key].lvl %>');
+					}
+				<% }); %>
+		  } else {
+		    scheHH.readOnly = true;
+		    scheMM.readOnly = true;
+		    scheLVL.readOnly = true;
+		  }
+		}
 
 		setInterval(()=>{
 			axios.post('/tree/refresh', { treeName: treeName })
