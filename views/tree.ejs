@@ -73,7 +73,11 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
-				  	<h5 class='value m-0 p-0 col-4 text-primary text-lastwater'><%= tree.lastWater.toLocaleString().split('T')[0] %><br/><%= tree.lastWater.toLocaleString().split('T')[1] %></h5>
+				  	<h5 class='value m-0 p-0 col-4 text-primary text-lastwater'>
+						<% if(tree.lastWater != 'None') { %>
+							<%= tree.lastWater.toLocaleString().split('T')[0] %><br/><%= tree.lastWater.toLocaleString().split('T')[1] %>
+						<% } %>
+						</h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
 				  	<h6 class='title m-0 p-0 col-4'>Sensors</h6>
@@ -263,7 +267,9 @@
 					docHumi.textContent = updateHumi;
 					docIswater.textContent = updateIswatering ? "YES" : "NO";
 					docIswatertoday.textContent = updateIswatertoday;
-					docLastwater.textContent = updateLastwater.toLocaleString().split('T')[0] + '_' + updateLastwater.toLocaleString().split('T')[1];
+					if(updateLastwater != 'None'){
+						docLastwater.textContent = updateLastwater.toLocaleString().split('T')[0] + '_' + updateLastwater.toLocaleString().split('T')[1];
+					}
 					docWater.style.display = updateIswatering ? "flex !important" : "none !important";
 				}
 			})

@@ -191,6 +191,7 @@ function stop_manual_water(evt, treeName){
 // report/tree
 function getFullyReport(evt, treeName){
   evt.preventDefault();
+  panel_toggle();
   axios.post('/generate-report', { tree: { name: treeName } }).then((res)=>{
     // console.log(res);
     axios.get('/fetch-report/' + treeName, { responseType: 'blob' }).then((res)=>{
@@ -198,6 +199,7 @@ function getFullyReport(evt, treeName){
       const pdfBlob = new Blob([res.data], { type: 'application/pdf' });
       // console.log(pdfBlob);
       saveAs(pdfBlob, 'Report_' + treeName + '.pdf');
+      panel_toggle();
     }).catch(error=>{
       console.log(error.response);
     });

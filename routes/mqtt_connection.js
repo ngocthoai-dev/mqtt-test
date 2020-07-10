@@ -97,7 +97,7 @@ function mqttConnection(){
           function(err, re){
             if(err) throw err;
 
-            if(valueTemp > 40 || valueTemp < -20 || valueHumi > 80 || valueHumi < -20){
+            if(valueTemp > 40 || valueTemp < -20 || valueHumi > 100 || valueHumi < 0){
               db().collection('tree').find({
                 [sensorTempHumi]: topic,
               }).toArray((err, trees)=>{
@@ -145,7 +145,7 @@ function mqttConnection(){
           function(err, re){
             if(err) throw err;
 
-            if(valueMois > 10 || valueMois < -10){
+            if(valueMois > 50 || valueMois < -20){
               db().collection('tree').find({
                 [sensorMois]: topic,
               }).toArray((err, trees)=>{
