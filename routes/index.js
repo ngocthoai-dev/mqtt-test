@@ -88,7 +88,7 @@ const request = require('request');
 const { PythonShell } = require('python-shell');
 let options = {
   mode: 'text',
-  pythonPath: 'python3',
+  pythonPath: 'python',
   // pythonOptions: ['u'],
   // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
   args: ['train']
@@ -158,7 +158,7 @@ async function crawlWeather(){
 
               let options = {
                 mode: 'text',
-                pythonPath: 'python3',
+                pythonPath: 'python',
                 // pythonOptions: ['u'],
                 // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
                 args: ['eval', dataInNex5Days[key].temp, dataInNex5Days[key].humi]
