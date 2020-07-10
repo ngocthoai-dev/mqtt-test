@@ -287,7 +287,7 @@ router.post('/tree/refresh', sessionChecker, function(req, res){
   }).toArray(function(err, result){
     if(err) throw err;
 
-    let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater=new Date('01-01-2020'), sensors=[], isWatering=false;
+    let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false;
     result.forEach((tree, i) => {
       temp = tree.currentData.temperature;
       mois = tree.currentData.moisture;
@@ -331,7 +331,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
   }).toArray(function(err, result){
     if(err) throw err;
 
-    let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='NoneTNone', sensors=[], isWatering=false, isDeleted=false;
+    let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false, isDeleted=false;
     result.forEach((tree, i) => {
       temp = tree.currentData.temperature;
       mois = tree.currentData.moisture;
@@ -355,14 +355,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     });
     // console.log(sensors);
     // console.log(req.params.treeName, isWatering, lastWater);
-    let lvlPrediction = dataInNex5Days();
-    Object.keys(lvlPrediction).forEach((key, i) => {
-      lvlPrediction[key] = {
-        lvl: parseInt(lvlPrediction[key].predLvl[0].substr(1, lvlPrediction[key].predLvl[0].length-2)),
-      }
-    });
 
-    console.log(lvlPrediction);
     res.render('../views/tree', {
       tree: {
         name: treeName,
@@ -371,7 +364,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
         sensors: sensors,
         isWatering: isWatering,
         isDeleted: isDeleted,
-        lvlPrediction: lvlPrediction,
+        lvlPrediction: dataInNex5Days(),
       },
     });
   });

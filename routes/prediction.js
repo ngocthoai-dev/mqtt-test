@@ -1,7 +1,4 @@
 var dataInNex5Days = {};
-function getDataInNext5Days(){
-  return dataInNex5Days;
-}
 
 const request = require('request');
 const { PythonShell } = require('python-shell');
@@ -81,7 +78,7 @@ function prediction(callback) {
                   if (err) console.log(err);
                   // results is an array consisting of messages collected during execution
                   console.log('results: %j ' + '--- ' + dataInNex5Days[key].temp + '=' + dataInNex5Days[key].humi  + '-' + idx + '-' + arr, results);
-                  dataInNex5Days[key].predLvl = results;
+                  dataInNex5Days[key].lvl = parseInt(results[0].substr(1, results[0].length-2));
                   cnt++;
                   if(cnt == arr.length){
                     resolve();
@@ -106,4 +103,6 @@ function prediction(callback) {
   setInterval(crawlWeather, 1000*60*60*24);
 }
 
-module.exports = { prediction, getDataInNext5Days };
+module.exports = { prediction, getDataInNext5Days: ()=>{
+    return dataInNex5Days;
+} };
