@@ -4,9 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const helmet = require('helmet');
+const cors = require('cors');
 
-var indexRouter = require('./routes/index').router;
 var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index').router;
 
 var app = express();
 
@@ -14,12 +15,28 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+// app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+
+let hashing = require('./routes/custom_hashing');
+const session = require('express-session');
+const MemoryStore = require('memorystore')(session)
+app.use(session({
+  key: 'sec',
+  secret: hashing.hash(hashing.getSecId(), {rounds: 20}),
+  store: new MemoryStore({
+    checkPeriod: 1000 * 60 * 60 * 24, // prune expired entries every 24h
+  }),
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true, maxAge: 1000 * 60 * 60 * 24 } // expire after 1 day
+}));
+
+app.use(cookieParser(hashing.hash(hashing.getSecId(), {rounds: 20})));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
+app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

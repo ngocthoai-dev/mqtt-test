@@ -52,12 +52,133 @@
   width: 50%;
 }
 
-.time-watering .region {
+/* .time-watering .region {
   float: none !important;
   border-radius: 4rem !important;
-}
+} */
 
 
 .right .overall-element {
   height: 80%;
 }
+
+.right .overall-title a {
+  font-size: 30px;
+  text-decoration: none !important;
+}
+
+.watering {
+  position: absolute;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2 !important;
+}
+
+.watering img {
+  width: 8rem;
+  padding-top: 2%;
+  transform: rotate(-45deg);
+  animation: water 10s linear infinite;
+  z-index: 2;
+}
+
+.watering button {
+  z-index: 2;
+}
+
+.watering .outside-filter {
+  background: rgba(255, 255, 255, 0.5) no-repeat;
+}
+
+@media only screen and (max-width: 768px){
+  .watering img {
+    width: 2rem;
+  }
+}
+
+@keyframes water {
+  0%, 100%
+  {
+    transform: rotate(-45deg);
+  }
+  20%
+  {
+    transform: rotate(0deg);
+  }
+  50%
+  {
+    transform: rotate(-15deg);
+  }
+  90%
+  {
+    transform: rotate(0deg);
+  }
+}
+
+/*.raining {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.raining .cloud img {
+  position: absolute;
+  opacity: 0.2;
+  animation: clouding calc(5s * var(--i)) linear infinite;
+  height: 40%;
+  top: -5%;
+  left: calc(20% * var(--w));
+  width: 80%;
+}
+
+@keyframes clouding {
+  0%
+  {
+    transform: translateX(-20%);
+  }
+  100%
+  {
+    transform: translateX(120%);
+  }
+}
+
+.raining .rain-drop img {
+  position: absolute;
+  opacity: 0.6;
+  top: calc(10% * var(--h));
+  height: 100%;
+  animation: dropping calc(5s * var(--i)) linear infinite;
+  left: calc(40% * var(--w));
+}
+
+@keyframes dropping {
+  from {
+    transform: translateY(-20%);
+  }
+  to {
+    transform: translateY(60%);
+  }
+}
+
+.raining .rain-drop-bubble img {
+  position: absolute;
+  animation: bubble calc(1s * var(--i)) linear infinite;
+  height: 10%;
+  bottom: calc(1% * var(--i));
+  left: calc(10% * var(--w));
+}
+
+@keyframes bubble {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+*/
