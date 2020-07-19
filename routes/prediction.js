@@ -24,6 +24,7 @@ function prediction(callback) {
     // console.log(await publicIp.v4());
     //=> '46.5.21.123'
     let url = 'http://ip-api.com/json/' + await publicIp.v4();
+    console.log('location request:', url);
     request(await url, function(err, response, body){
       if(err) console.log(err);
       else {
@@ -37,6 +38,7 @@ function prediction(callback) {
         // http://api.openweathermap.org/data/2.5/forecast?q=Ho%20Chi%20Minh%20City&mode=json&appid=9559a25fcb2825e55c5af3b867369b67
         let url = 'http://api.openweathermap.org/data/2.5/forecast?q=' + city + '&units=metric&mode=json&appid=' + api;
 
+        console.log('weather request:', url);
         request(url, function(err, response, body){
           // console.log(url);
           if(err) console.log(err);
