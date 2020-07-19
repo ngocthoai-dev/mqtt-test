@@ -10,7 +10,11 @@ const path = require('path');
 // secured id
 const hashing = require('../routes/custom_hashing');
 const secid = require('../routes/custom_hashing').getSecId();
+// prediction data
 const dataInNex5Days = require('../routes/prediction').getDataInNext5Days;
+// get user connect
+const getUserLst = require('../routes/users').getUserLst;
+const requestIp = require('request-ip');
 
 // connect db
 const db = require('../routes/dbConnection').db;
@@ -310,7 +314,7 @@ router.post('/tree/refresh', sessionChecker, function(req, res){
       }
     });
     // console.log(sensors);
-    // console.log(req.params.treeName, isWatering, lastWater);
+    // console.log(req.body.treeName, isWatering, lastWater);
 
     res.send({
       data: {
@@ -328,7 +332,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
   db().collection('tree').find({
     name: treeName,
     user: req.signedCookies['secid'],
-  }).toArray(function(err, result){
+  }).toArray(async function(err, result){
     if(err) throw err;
 
     let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false, isDeleted=false;
@@ -355,6 +359,10 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     });
     // console.log(sensors);
     // console.log(req.params.treeName, isWatering, lastWater);
+    let clientIP = requestIp.getClientIp(req);
+
+    let data = await dataInNex5Days(clientIP);
+    // console.log(clientIP, data, dataInNex5Days(clientIP));
 
     res.render('../views/tree', {
       tree: {
@@ -364,7 +372,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
         sensors: sensors,
         isWatering: isWatering,
         isDeleted: isDeleted,
-        lvlPrediction: dataInNex5Days(),
+        lvlPrediction: data,
       },
     });
   });
@@ -420,10 +428,12 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
   } else if(checkType.includes('manual')) { // error may occur by schedule and manual
     // manual water
     let treeName=req.body.data.tree, flow=req.body.data.flow;
+    if(flow == '')
+      flow = 60;
 
     // stop watering
     // console.log('stop');
-      // watering
+    // watering
       db().collection('tree').find({
         user: req.signedCookies['secid'],
         name: treeName,
@@ -445,7 +455,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
               user: req.signedCookies['secid'],
               name: treeName,
             }, {
-              $set: { isWatering: false, },
+              $set: { isWatering: false, 'motor.value': ["0", "0"] },
             }, { upsert: true, },
             function(err, result){
               if(err) throw err;
@@ -485,7 +495,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
                         user: req.signedCookies['secid'],
                         name: treeName,
                       }, {
-                        $set: { isWatering: false, },
+                        $set: { isWatering: false, 'motor.value': ["0", "0"] },
                       }, { upsert: true, },
                       function(err, result){
                         if(err) throw err;
@@ -513,13 +523,26 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
               } else {
                 value = "100";
               }
-              data.push({
-                "device_id": "Light_D",
-                "values": ["1", value],
+              console.log(flow, data);
+              db().collection('tree').findOneAndUpdate({
+                user: req.signedCookies['secid'],
+                name: treeName,
+              }, {
+                $set: { isWatering: false, 'motor.value': ["1", value] },
+              }, { upsert: true, },
+              function(err, result){
+                if(err) throw err;
+
+                let data = [];
+                data.push({
+                  "device_id": "Light_D",
+                  "values": ["1", value],
+                });
+
+                publish_motor(result.value.motor.name, JSON.stringify(data));
+                res.send({ data: { success: true, msg: "watering" } });
+                // console.log(result);
               });
-              // console.log(data);
-              publish_motor(re.value.motor.name, JSON.stringify(data));
-              res.send({ data: { success: true, msg: "watering" } });
             });
           }
       }
@@ -551,7 +574,7 @@ router.get('/report/:treeName', sessionChecker, function(req, res){
         if(cnt>7){
           break;
         }
-        console.log(cnt, current);
+        // console.log(cnt, current);
         let itemDate = new Date(item.date.toISOString().split('T')[0]);
         if(itemDate < current){
           cnt++;
@@ -588,7 +611,7 @@ router.get('/report/:treeName', sessionChecker, function(req, res){
       });
     }
 
-    console.log(data);
+    // console.log(data);
     res.render('../views/report', { tree: { name: req.params.treeName, data: data } });
   });
 });

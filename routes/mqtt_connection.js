@@ -178,7 +178,7 @@ function mqttConnection(){
             [sensorLight]: topic,
           }, {
             $set: {
-              date: new Date(),
+              'motor.date': new Date(),
               'motor.value': dataLight,
             },
           }, { upsert: true },
