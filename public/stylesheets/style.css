@@ -8,12 +8,12 @@ html, body {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 20px;
+  width: 2px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 5px green;
+  box-shadow: inset 0 0 10px rgb(174, 174, 174);
   border-radius: 10px;
 }
 
@@ -42,8 +42,8 @@ html, body {
 }
 
 .left .plant-title {
-  margin: 0 25% 10% 0;
-	height: 10%;
+  margin: 0 15% 10% -5%;
+	height: 7%;
   display: inline-block;
 }
 
@@ -102,7 +102,7 @@ html, body {
 
 .right .overall-element {
 	width: 100%;
-	height: 60%;
+	height: 80%;
 }
 
 @media only screen and (max-width: 768px) {
@@ -127,15 +127,18 @@ html, body {
 }
 
 .list-overall li {
-	border-radius: 4rem;
+	border-radius: 0.5rem;
+	display:inline;
 }
 
 .list-overall li:first-child {
-	border-radius: 4rem;
+	border-radius: 0.5rem;
+	display:inline;
 }
 
 .list-overall li:last-child {
-	border-radius: 4rem;
+	border-radius: 0.5rem;
+	display:inline;
 }
 
 @media only screen and (max-width: 425px) {
@@ -158,14 +161,13 @@ html, body {
 
 /* app name */
 .app-name {
-	width: 95%;
-	height: 15%;
+	width: 100%;
 	font-family: 'Quicksand';
-	font-size: 25px;
-  background: linear-gradient(to right, rgba(0, 0, 255, 1) 45%, rgba(255, 0, 0, 1) 47%, rgba(0, 255, 0, 1) 50%, rgba(0, 0, 255, 1) 52%, rgba(255, 0, 0, 1) 55%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+	font-size: 40px;
+	background: linear-gradient(180deg, rgba(0,228,155,1) 0%, rgba(0,107,134,1) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+  }
 
 
 /* filter panel */
@@ -178,7 +180,8 @@ html, body {
 }
 
 .filter-panel	.card {
-	border-radius: 2rem;
+	border-radius: 1.25rem;
+	padding:25px;
 }
 
 .filter-panel .close-filter {
@@ -188,9 +191,15 @@ html, body {
 .filter-panel .tree-name-input {
 	width: 100%;
 	padding: 5px;
+	padding-left: 10px;
 	border-radius: 0.6rem;
 	background: rgba(0, 0, 0, 0.1);
 	border: 0;
+}
+
+.filter-panel .tree-name-input:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(21, 156, 228, 0.4);
 }
 
 .filter-panel .filter-range {
@@ -209,14 +218,22 @@ html, body {
 
 .filter-range input {
 	padding: 5px;
+	padding-left: 10px;
 	background: rgba(0, 0, 0, 0.1);
 	border: 0;
-	border-radius: 0.6rem;
+	border-radius: 0.5rem;
 	width: 4rem;
+}
+
+.filter-range input:focus {
+	outline: none;
+	box-shadow: 0 0 0 2px rgba(21, 156, 228, 0.4);
 }
 
 .filter-panel .filter-submit .filter-button {
 	border-radius: 50%;
+	width:50px;
+	height:50px;
 }
 
 .filter-panel .card {
@@ -227,4 +244,18 @@ html, body {
 	width: 100%;
 	height: 100%;
 	z-index: 1;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: "Quicksand";
+  }
+
+h1,h2,h3 {
+	font-weight:600;
+	line-height: 1.8em;
+}
+
+.panel-option {
+	padding: 7px;
+	padding-left: 14px;
 }
