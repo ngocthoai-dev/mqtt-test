@@ -45,34 +45,68 @@
 			</div>
 		</div>
 
+
 		<div class='right col-6'>
 			<div class='overall-title mx-2'>
 				<a class='text-success get-fully-report' href='<%= "/report/" + tree.name %>' title='move to temperarily report'>Report</a>
 			</div>
 			<div class='overall-element'>
 				<ul class="list-group list-overall">
-				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-8'>Temperature</h6>
+					
+		
+				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">  
+					<h6 id='infoline1' class='title m-0 p-0 col-8 infoline1'><i class="fas fa-temperature-high" title="Temperature"></i>
+					
+						<script>
+							if (window.innerWidth < 1280)
+								document.getElementById('infoline1').innerHTML += "Temperature"
+						</script>	
+					</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-danger text-temp'><%= tree.temperature %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-8'>Soil Moisture</h6>
+					<h6 id='infoline2' class='title m-0 p-0 col-8'><i class="fas fa-water" title="Soil moisture"></i>
+						<script>
+							if (window.innerWidth < 1280)
+								document.getElementById('infoline2').innerHTML += "Soil moisture"
+						</script>	
+					</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-dark text-mois'><%= tree.moisture %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-8'>Air Humidity</h6>
+					  <h6 id='infoline3' class='title m-0 p-0 col-8'><i class="fas fa-tint" title="Air humidity"></i>
+						<script>
+							if (window.innerWidth < 1280)
+								document.getElementById('infoline3').innerHTML += "Air humidity"
+						</script>	
+					</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-info text-humi'><%= tree.humidity %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-8'>Is Watering?</h6>
+					  <h6 id='infoline4' class='title m-0 p-0 col-8'><i class="fas fa-shower" title="Is watering?"></i>
+						<script>
+							if (window.innerWidth < 1280)
+								document.getElementById('infoline4').innerHTML += "Is it watered?"
+						</script>	
+					</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-primary text-iswater'><%= tree.isWatering ? "YES" : "NO" %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-8'>Were Tree Watered Today?</h6>
+					  <h6 id='infoline5' class='title m-0 p-0 col-8'><i class="fas fa-seedling" title="Was this tree watered today?"></i>
+						<script>
+							if (window.innerWidth < 1280)
+								document.getElementById('infoline5').innerHTML += "Was the tree watered today?"
+						</script>	
+					</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-warning text-iswatertoday'><%= tree.isWaterToday %></h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-8'>Last Watering</h6>
+					  <h6 id='infoline6' class='title m-0 p-0 col-8'><i class="far fa-calendar-alt" title="Last watering"></i>
+						<script>
+							if (window.innerWidth < 1280)
+								document.getElementById('infoline6').innerHTML += "Last watering"
+						</script>	
+					</h6>
 				  	<h5 class='value m-0 p-0 col-4 text-primary text-lastwater'>
 						<% if(tree.lastWater != 'None') { %>
 							<%= tree.lastWater.toLocaleString().split('T')[0] %><br/><%= tree.lastWater.toLocaleString().split('T')[1] %>
@@ -80,7 +114,7 @@
 						</h5>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-start align-items-center my-2 mx-3 py-3 px-5 row">
-				  	<h6 class='title m-0 p-0 col-4'>Sensors</h6>
+				  	<h6 class='title m-0 p-0 col-4'><i class="fas fa-microchip" title="Sensors"></i></h6>
 				  	<h5 class='value m-0 p-0 col-8 text-primary'>
 				  		<% tree.sensors.forEach((item, i)=>{ %>
 								<% Object.keys(item).forEach((key)=>{ %>
