@@ -1,3 +1,9 @@
+// axios.get('https://api.ipify.org/?format=json').then((res)=>{
+// 	console.log(res);
+// }).catch((err)=>{
+// 	console.log(err);
+// });
+
 function login(evt){
 	evt.preventDefault();
 	let data = {
@@ -15,6 +21,16 @@ function login(evt){
 		parentTag.querySelector('span.span-msg') ? parentTag.removeChild(parentTag.querySelector('span.span-msg')) : console.log('');
 
 		if(res.data.success == false){
+			if(res.data.tagMsg.includes('whole')){
+	      swal({
+	        title: "Error!",
+	        text: res.data.msg,
+	        icon: "warning",
+	        button: "Retry!",
+	      });
+				return;
+			}
+
 			if(res.data.tagMsg.includes('username')){
 			  newNode.appendChild(document.createTextNode(res.data.msg));
 				parentTag.insertBefore(newNode, parentTag.querySelector('.one').nextSibling);
@@ -47,6 +63,16 @@ function register(evt){
 		parentTag.querySelector('span.span-msg') ? parentTag.removeChild(parentTag.querySelector('span.span-msg')) : console.log('');
 
 		if(res.data.success == false){
+			if(res.data.tagMsg.includes('whole')){
+	      swal({
+	        title: "Error!",
+	        text: res.data.msg,
+	        icon: "warning",
+	        button: "Retry!",
+	      });
+				return;
+			}
+
 			if(res.data.tagMsg.includes('username')){
 			  newNode.appendChild(document.createTextNode(res.data.msg));
 				parentTag.insertBefore(newNode, parentTag.querySelector('.one').nextSibling);

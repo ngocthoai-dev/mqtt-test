@@ -113,8 +113,8 @@ function tree_schedule_water(evt, treeName){
       }
     } else {
       swal({
-        title: "Wrong input!",
-        text: res.msg,
+        title: "Error!",
+        text: res.data.msg,
         icon: "warning",
         button: "Retry!",
       });
@@ -150,9 +150,10 @@ function tree_manual_water(evt, treeName){
         button: "Done!",
       });
     } else {
+      console.log(res);
       swal({
-        title: "Wrong input!",
-        text: res.msg,
+        title: "Error!",
+        text: res.data.msg,
         icon: "warning",
         button: "Retry!",
       });
