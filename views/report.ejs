@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-
   <% include ./partial/top.ejs %>
 
   <title><%= tree.name %> Report</title>
@@ -12,7 +11,6 @@
       height: 100%;
       background: url('../../images/background.jpg');
     }
-
     /* app name */
     .app-name {
     	font-family: 'Quicksand';
@@ -20,15 +18,13 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    #container .filter-panel {
+    .filter-panel {
+      z-index: 2000;
       width: 100%;
       height: 100%;
-      z-index: 1;
       background: rgba(0, 0, 0, 0.5);
       display: none !important;
     }
-
     .loader {
       border: 16px solid #f3f3f3; /* Light grey */
       border-top: 16px solid #3498db; /* Blue */
@@ -37,7 +33,6 @@
       height: 120px;
       animation: spin 2s linear infinite;
     }
-
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -70,11 +65,11 @@
       <% }); %>
       </tbody>
     </table>
-
-    <div style="z-index: 2000;" class="filter-panel fixed-top d-flex justify-content-center align-items-center">
-      <div class="loader"></div>
-    </div>
 	</div>
+
+  <div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+    <div class="loader"></div>
+  </div>
 
   <div class="panel-option fixed-top">
     <a href='/logout' style='font-size: 30px;' title='Logout'><i class="fas fa-power-off"></i></a>

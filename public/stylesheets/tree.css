@@ -22,12 +22,13 @@
 .plant-action .freq-select {
   padding-left: 15%;
   height: 4rem;
-  border-radius: 4rem;
+  border-radius: 0.5rem;
   border: 1px solid gray;
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   background: transparent url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right 1rem center;
   background-size: 8px 10px;
   direction: ltr;
+  height: 57px;
 }
 
 .plant-action .time-watering {
@@ -38,18 +39,21 @@
   background: transparent;
   border: 1px solid rgba(0, 0, 0, 0.5);
   text-align: center;
+  height: 55px;
 }
 
 .time-watering input:first-child {
-  border-radius: 4rem 0 0 4rem;
+  border-radius: 0.5rem 0 0 0.5rem;
   float: left;
   width: 50%;
+  height: 55px;
 }
 
 .time-watering input:last-child {
-  border-radius: 0 4rem 4rem 0;
+  border-radius: 0 0.5rem 0.5rem 0;
   clear: left;
   width: 50%;
+  height: 55px;
 }
 
 /* .time-watering .region {
@@ -125,7 +129,6 @@
   left: 0;
   overflow: hidden;
 }
-
 .raining .cloud img {
   position: absolute;
   opacity: 0.2;
@@ -135,7 +138,6 @@
   left: calc(20% * var(--w));
   width: 80%;
 }
-
 @keyframes clouding {
   0%
   {
@@ -146,7 +148,6 @@
     transform: translateX(120%);
   }
 }
-
 .raining .rain-drop img {
   position: absolute;
   opacity: 0.6;
@@ -155,7 +156,6 @@
   animation: dropping calc(5s * var(--i)) linear infinite;
   left: calc(40% * var(--w));
 }
-
 @keyframes dropping {
   from {
     transform: translateY(-20%);
@@ -164,7 +164,6 @@
     transform: translateY(60%);
   }
 }
-
 .raining .rain-drop-bubble img {
   position: absolute;
   animation: bubble calc(1s * var(--i)) linear infinite;
@@ -172,7 +171,6 @@
   bottom: calc(1% * var(--i));
   left: calc(10% * var(--w));
 }
-
 @keyframes bubble {
   from {
     opacity: 0.2;
