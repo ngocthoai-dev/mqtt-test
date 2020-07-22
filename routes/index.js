@@ -95,17 +95,16 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
   }).toArray(function(err, treeLst){
     if(err) console.log(err);
     let trees = [], everyTreeWater="YES", lastWatering=new Date('01-01-2020');
-
     treeLst.forEach((tree) => {
       if(tree.water){
-        Object.keys(tree.water).forEach((key)=>{
-          if(new Date(key) < new Date()){
-            everyTreeWater = "NO";
-          }
-          if(new Date(key) >= lastWatering){
-            lastWatering = new Date(key + "T" + tree.water[key][0]);
-          }
-        });
+        lastWaterKey = Object.keys(tree.water)[Object.keys(tree.water).length - 1];
+        if(new Date(lastWaterKey) < new Date().setHours(0, 0, 0, 0)){
+          everyTreeWater = "NO";
+        }
+        // console.log(lastWaterKey, new Date(lastWaterKey), tree.water[lastWaterKey][0]);
+        if(new Date(lastWaterKey) >= lastWatering){
+          lastWatering = new Date(lastWaterKey + "T" + tree.water[lastWaterKey][0]);
+        }
       }
     });
 
