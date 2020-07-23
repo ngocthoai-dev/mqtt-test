@@ -166,7 +166,7 @@
 							btnTag.className = 'btn btn-outline-info tree-elems w-100';
 							btnTag.type = 'button';
 							btnTag.textContent = treeName;
-							btnTag.onCLick = '';
+							btnTag.onCLick = "";
 
 							liTag.appendChild(btnTag);
 
@@ -178,7 +178,7 @@
 							text: "You update " + treeName,
 							icon: "success",
 							button: "Thanks!",
-						});
+						}).then(function() {window.location.href = "https://localhost:4444/"})
 					}
 				});
 			}
