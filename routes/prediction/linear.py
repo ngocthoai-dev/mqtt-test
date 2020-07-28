@@ -106,7 +106,6 @@ if __name__ == '__main__':
             train(X, y, os.path.join(os.path.dirname(__file__), 'save/weight2_GPU.pth'), epochs=100000, learningRate=0.001)
         else:
             train(X, y, os.path.join(os.path.dirname(__file__), 'save/weight2.pth'), epochs=100000, learningRate=0.001)
-            
         print('Train Successfully!')
     elif sys.argv[1] == 'eval':
         # date = datetime.timestamp(datetime.strptime(sys.argv[2], "%Y-%m-%d %H:%M:%S"))
