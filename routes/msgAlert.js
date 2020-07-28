@@ -40,38 +40,32 @@ let checkInDangerTree = ()=>{
       if(err) throw err;
 
       trees.forEach((tree, i) => {
-        if(tree.data.length > 0){
-          let temp, mois, humi, today=new Date();
-          today.setDate(today.getDate()-1);
-          for(let i=0; i<tree.data.length; i++) {
-            if(tree.data[i].date < today)
-              break;
-            if(!temp && tree.data[i].temperature)
-              temp = tree.data[i].temperature;
-            if(!mois && tree.data[i].moisture)
-              mois = tree.data[i].moisture;
-            if(!humi && tree.data[i].humidity)
-              humi = tree.data[i].humidity;
-          }
-          if(temp > 40 || temp < -20 || humi > 100 || humi < 0 || mois > 50 || mois < -20){
-            tree.user.forEach((user, i) => {
-              db().collection('user').findOne({
-                username: user.split('$')[0],
-              }, (err, user)=>{
-                if(err) throw err;
+        let temp, mois, humi, today=new Date();
+        today.setDate(today.getDate()-1);
+        if(tree.currentData.temperature)
+          temp = tree.currentData.temperature;
+        if(tree.currentData.moisture)
+          mois = tree.currentData.moisture;
+        if(tree.currentData.humidity)
+          humi = tree.currentData.humidity;
+        if(temp > 40 || temp < -20 || humi > 100 || humi < 0 || mois > 50 || mois < -20){
+          tree.user.forEach((user, i) => {
+            db().collection('user').findOne({
+              username: user.split('$')[0],
+            }, (err, user)=>{
+              if(err) throw err;
 
-                if(user.email){
-                  sendMsg('guest121019@gmail.com', user.email, function(msg){
-                    console.log(msg);
-                  }, 'ALERT: ' + tree.name + ' Need Water!',
-                  ('Dear ' + user.username + ',<br/><br/>' +
-                  'the ' + tree.name + ' tree with the temperature: <b>' + temp + '</b>;' + 'the moisture: <b>' + mois + '</b>;' + 'the humidity: <b>' + humi + '</b>;' +
-                  'need watering!<br/><br/>' +
-                  'Thanks for using our app,<br/>Sincerely,<br/>mqtt-test.'));
-                }
-              });
+              if(user.email){
+                sendMsg('guest121019@gmail.com', user.email, function(msg){
+                  console.log(msg);
+                }, 'ALERT: ' + tree.name + ' Need Water!',
+                ('Dear ' + user.username + ',<br/><br/>' +
+                'the ' + tree.name + ' tree with the temperature: <b>' + temp + '</b>;' + 'the moisture: <b>' + mois + '</b>;' + 'the humidity: <b>' + humi + '</b>;' +
+                'need watering!<br/><br/>' +
+                'Thanks for using our app,<br/>Sincerely,<br/>mqtt-test.'));
+              }
             });
-          }
+          });
         }
       });
     });

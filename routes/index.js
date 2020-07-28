@@ -95,17 +95,16 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
   }).toArray(function(err, treeLst){
     if(err) console.log(err);
     let trees = [], everyTreeWater="YES", lastWatering=new Date('01-01-2020');
-
     treeLst.forEach((tree) => {
       if(tree.water){
-        Object.keys(tree.water).forEach((key)=>{
-          if(new Date(key) < new Date()){
-            everyTreeWater = "NO";
-          }
-          if(new Date(key) >= lastWatering){
-            lastWatering = new Date(key + "T" + tree.water[key][0]);
-          }
-        });
+        lastWaterKey = Object.keys(tree.water)[Object.keys(tree.water).length - 1];
+        if(new Date(lastWaterKey) < new Date().setHours(0, 0, 0, 0)){
+          everyTreeWater = "NO";
+        }
+        // console.log(lastWaterKey, new Date(lastWaterKey), tree.water[lastWaterKey][0]);
+        if(new Date(lastWaterKey) >= lastWatering){
+          lastWatering = new Date(lastWaterKey + "T" + tree.water[lastWaterKey][0]);
+        }
       }
     });
 
@@ -336,11 +335,23 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     if(err) throw err;
 
     let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false, isDeleted=false;
+    console.log(result);
     result.forEach((tree, i) => {
       temp = tree.currentData.temperature;
       mois = tree.currentData.moisture;
       humi = tree.currentData.humidity;
-      sensors = tree.sensor;
+      tree.sensor.forEach((sensor, i)=>{
+        Object.keys(sensor).forEach((key, i)=>{
+          if(key != "date"){  
+            sensors.push({
+              [key]: sensor[key],
+            });
+          }
+        });
+      });
+      sensors.push({
+        'motor': tree.motor.name,
+      });
       isDeleted = tree.isDeleted;
       if(tree.motor.value){
         // console.log(tree.motor.value);
@@ -357,12 +368,12 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
         }
       }
     });
-    // console.log(sensors);
+    console.log(sensors);
     // console.log(req.params.treeName, isWatering, lastWater);
     let clientIP = requestIp.getClientIp(req);
 
     let data = await dataInNex5Days(clientIP);
-    // console.log(clientIP, data, dataInNex5Days(clientIP));
+    console.log(clientIP, data, dataInNex5Days(clientIP));
 
     res.render('../views/tree', {
       tree: {
@@ -481,36 +492,25 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
             function(err, re){
               if(err) throw err;
 
-              let waterTimeout = setTimeout(()=>{
+              setTimeout(()=>{
                 // stop watering after flow sec
-                db().collection('tree').find({
+                db().collection('tree').findOneAndUpdate({
                   user: req.signedCookies['secid'],
                   name: treeName,
-                }).toArray((err, trees)=>{
+                }, {
+                  $set: { isWatering: false, 'motor.value': ["0", "0"] },
+                }, { upsert: true, },
+                function(err, result){
                   if(err) throw err;
 
-                  trees.forEach((tree, i) => {
-                    if(tree.isWatering == true){
-                      db().collection('tree').findOneAndUpdate({
-                        user: req.signedCookies['secid'],
-                        name: treeName,
-                      }, {
-                        $set: { isWatering: false, 'motor.value': ["0", "0"] },
-                      }, { upsert: true, },
-                      function(err, result){
-                        if(err) throw err;
-
-                        let data = [];
-                        data.push({
-                          "device_id": "Light_D",
-                          "values": ["0", "0"],
-                        });
-
-                        publish_motor(result.value.motor.name, JSON.stringify(data));
-                        // console.log(result);
-                      });
-                    }
+                  let data = [];
+                  data.push({
+                    "device_id": "Light_D",
+                    "values": ["0", "0"],
                   });
+
+                  publish_motor(result.value.motor.name, JSON.stringify(data));
+                  // console.log(result);
                 });
               }, 1000*flow);
 
@@ -528,7 +528,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
                 user: req.signedCookies['secid'],
                 name: treeName,
               }, {
-                $set: { isWatering: false, 'motor.value': ["1", value] },
+                $set: { 'motor.value': ["1", value] },
               }, { upsert: true, },
               function(err, result){
                 if(err) throw err;
@@ -688,7 +688,8 @@ router.post('/addSensor', sessionChecker, function(req, res) {
       isDeleted: false,
     }).toArray((err, trees)=>{
       if(err) throw err;
-
+      
+      // console.log(tempHumiName, moisName, motorName);
       if(tempHumiName != ''){
         sensor.push({
           tempHumi: tempHumiName,
@@ -739,7 +740,7 @@ router.post('/addSensor', sessionChecker, function(req, res) {
         function(err, re){
           if(err) throw err;
 
-          // console.log(re);
+          console.log(re);
           res.send({ success: true, msg: 'update' });
         });
       } else {

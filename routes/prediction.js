@@ -100,7 +100,7 @@ function prediction(callback, ip=undefined) {
                   PythonShell.run(__dirname + '/../routes/prediction/linear.py', options, await function (err, results) {
                     if (err) console.log(err);
                     // results is an array consisting of messages collected during execution
-                    console.log('results: %j ' + '--- ' + data5Days[key].temp + '=' + data5Days[key].humi  + '-' + idx + '-' + arr, results);
+                    console.log('results: ' + results + '--- ' + data5Days[key].temp + '=' + data5Days[key].humi, 'day: ' + key + '......' + idx, "====");
                     data5Days[key].lvl = parseInt(results[0].substr(1, results[0].length-2));
                     cnt++;
                     if(cnt == arr.length){

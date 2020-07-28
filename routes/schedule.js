@@ -40,7 +40,6 @@ function wateringSchedule(schedule, treeName, users, level) {
       "values": ["1", value],
     });
     // console.log(data);
-    publish_motor(motor, JSON.stringify(data));
 
     // set stop watering
     schedule['timeout'] = setTimeout(()=>{
@@ -56,7 +55,7 @@ function wateringSchedule(schedule, treeName, users, level) {
               name: treeName,
               user: users,
             }, {
-              $set: { isWatering: false, },
+              $set: { isWatering: false, 'motor.value': ["0", "0"], },
             }, function(err, res){
               if(err) throw err;
               // console.log(res);
@@ -73,6 +72,24 @@ function wateringSchedule(schedule, treeName, users, level) {
         });
       });
     }, 1000*level);
+    
+    db().collection('tree').findOneAndUpdate({
+      name: treeName,
+    }, {
+      $set: { 'motor.value': ["1", value] },
+    }, { upsert: true, },
+    function(err, result){
+      if(err) throw err;
+
+      let data = [];
+      data.push({
+        "device_id": "Light_D",
+        "values": ["1", value],
+      });
+
+      publish_motor(result.value.motor.name, JSON.stringify(data));
+      // console.log(result);
+    });
   });
 }
 
@@ -84,8 +101,6 @@ const deleteScheduleList = (treeName)=>{
 let fetch_schedule_water = ()=>{
   // make schedule routine
   let scheduleFunc = ()=>{
-    console.log('auto');
-
     db().collection('tree').find({
     }).toArray((err, trees)=>{
       if(err) throw err;
@@ -94,15 +109,23 @@ let fetch_schedule_water = ()=>{
         if(Object.keys(tree.schedule).length < 3)
           return;
         if(tree.schedule && tree.schedule.frequency != 0){
-          if((treeInWater[tree.name] != undefined && treeInWater[tree.name].time.localeCompare(tree.schedule.time)) || treeInWater[tree.name] == undefined){
+          // check tree is watering or not water schedule before
+          if((treeInWater[tree.name] != undefined && treeInWater[tree.name].time.localeCompare(tree.schedule.time)) || treeInWater[tree.name] == undefined){            
+            // clear all stop and water time
             if(schedule_water_list[tree.name]){
               deleteScheduleList(tree.name);
             }
+            console.log(tree.name, 'auto');
+            // set schedule time hh:mm:0
             let scheduleTime = new Date();
             scheduleTime.setHours(tree.schedule.time.toString().split(':')[0], tree.schedule.time.toString().split(':')[1], 0);
+
+            // next freq date
             if(scheduleTime <= new Date()){
-              scheduleTime.setDate(scheduleTime.getDate()+1);
+              scheduleTime.setDate(scheduleTime.getDate()+tree.schedule.frequency);
             }
+
+            // now
             let today = new Date();
             today.setSeconds(scheduleTime.getSeconds());
             let timeToSchedule = Math.abs(today - scheduleTime);
@@ -111,7 +134,7 @@ let fetch_schedule_water = ()=>{
               isWatering: tree.isWatering,
               time: tree.schedule.time,
             }
-            console.log(timeToSchedule);
+            console.log(timeToSchedule / 1000);
 
             setTimeout(()=>{
               var schedule={}, treeName=tree.name, users=tree.user;

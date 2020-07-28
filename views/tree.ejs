@@ -25,8 +25,8 @@
 						<option value="7">Every Weeks</option>
 					</select>
 					<div class="time-watering mt-3">
-						<input readonly id='schedule-hh' type="number" name="" min="0" max="24" value="" class='p-2 hh' placeholder="hour" title='hour to watering, default: 0'>
-						<input readonly id='schedule-mm' type="number" name="" min="0" max="60" value="" class='p-2 mm' placeholder="minute" title='minute to watering, default: 0'>
+						<input readonly id='schedule-hh' type="number" name="" min="0" max="23" value="" class='p-2 hh' placeholder="hour" title='hour to watering, default: 0'>
+						<input readonly id='schedule-mm' type="number" name="" min="0" max="59" value="" class='p-2 mm' placeholder="minute" title='minute to watering, default: 0'>
 					</div>
 					<div class="time-watering mt-3">
 						<input readonly id='schedule-lvl' type="number" name="" min="0" max="10000" value="" class='p-2 ml' placeholder="water level" title='level water needed for automation, default: 60'>
@@ -118,10 +118,10 @@
 						</h6>
 				  	<h5 class='value m-0 p-0 col-8 text-primary'>
 				  		<% tree.sensors.forEach((item, i)=>{ %>
-								<% Object.keys(item).forEach((key)=>{ %>
-									<%= ["Moisture", "TempHumi"].includes(key) ? key + ": " + item[key] : "" %>
-								<% }); %>
-								<br />
+							<% Object.keys(item).forEach((key)=>{ %>
+								<%= key + ": " + item[key] %>
+							<% }); %>
+							<br />
 				  		<% }); %>
 				  	</h5>
 				  </li>
@@ -254,32 +254,43 @@
 		<% }); %>
 		var freqSelect = document.getElementsByClassName('freq-select')[0], scheHH = document.getElementById('schedule-hh'), scheMM = document.getElementById('schedule-mm'), scheLVL = document.getElementById('schedule-lvl');
 		function checkFreq(){
-		  if(freqSelect.value > 0){
-		    scheHH.readOnly = false;
-		    scheMM.readOnly = false;
-		    scheLVL.readOnly = false;
-		    let temp = freqSelect.value;
-		    if(temp > 4){
+		  	if(freqSelect.value > 0){
+				scheHH.readOnly = false;
+				scheMM.readOnly = false;
+				scheLVL.readOnly = false;
+				let temp = freqSelect.value;
+				let todayDate = new Date();
+				todayDate.setDate(new Date().getDate()+parseInt(temp));
+				console.log(todayDate);
+				if(temp > 4){
 					temp = 4;
+					let larDate = new Date();
+					// console.log('<%= tree.lvlPrediction['2020-07-28'] %>');
 					<% Object.keys(tree.lvlPrediction).forEach((key)=>{ %>
 						// console.log('<%= key %>'.split('-')[2], new Date().getDate() + parseInt(temp), '<%= key %>'.split('-')[2] == new Date().getDate() + parseInt(temp));
-						if(parseInt('<%= key %>'.split('-')[2]) > parseInt(temp)){
-							temp = parseInt('<%= key %>'.split('-')[2]);
+						if(larDate < new Date('<%= key %>')){
+							larDate = new Date('<%= key %>');
 						}
+						// console.log(larDate, '<%= key %>', new Date('<%= key %>'));
 					<% }); %>
-		    }
+					// console.log(larDate.getDate(), todayDate);
+					if(larDate < todayDate){
+						todayDate = larDate;
+					}
+				}
 				<% Object.keys(tree.lvlPrediction).forEach((key)=>{ %>
 					// console.log('<%= key %>'.split('-')[2], new Date().getDate() + parseInt(temp), '<%= key %>'.split('-')[2] == new Date().getDate() + parseInt(temp));
-					if('<%= key %>'.split('-')[2] == parseInt(new Date().getDate()) + parseInt(temp)){
+
+					if('<%= key %>'.split('-')[2] == todayDate.getDate()){
 						// console.log(scheLVL);
 						scheLVL.setAttribute('placeholder', 'water level: <%= tree.lvlPrediction[key].lvl %>');
 					}
 				<% }); %>
-		  } else {
-		    scheHH.readOnly = true;
-		    scheMM.readOnly = true;
-		    scheLVL.readOnly = true;
-		  }
+			} else {
+				scheHH.readOnly = true;
+				scheMM.readOnly = true;
+				scheLVL.readOnly = true;
+		 	}
 		}
 		setInterval(()=>{
 			axios.post('/tree/refresh', { treeName: treeName })
