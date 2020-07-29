@@ -28,13 +28,13 @@ const postTreeFilter = (data)=>
   .then((resp)=>resp.data);;;
 
 // index
-function createTreeListElement(treeName){
+function createTreeListElement(treeName, deleted){
   let liTag = document.createElement('li');
   liTag.className = 'list-group-item border-0 p-1';
   let aTag = document.createElement('a');
   aTag.href = '/tree/' + treeName;
   let buttonTag = document.createElement('button');
-  buttonTag.className = 'btn btn-success tree-elems w-100';
+  buttonTag.className = 'btn ' + (deleted[treeName] ? "btn-secondary" : "btn-success") + ' tree-elems w-100';
   buttonTag.type = 'button';
   buttonTag.textContent = treeName;
   aTag.appendChild(buttonTag);
@@ -53,13 +53,13 @@ function filter_submit(evt){
 		HumidityMinValue: evt.target[6].value,
 		HumidityMaxValue: evt.target[7].value,
 	}).then(res=>{
-    console.log(res);
+    // console.log(res);
     let ulTree = document.getElementsByClassName('list-tree')[0];
     while(ulTree.firstChild){
       ulTree.removeChild(ulTree.firstChild);
     }
-    res.forEach((item, i) => {
-      ulTree.appendChild(createTreeListElement(item));
+    Object.keys(res).forEach((item, i) => {
+      ulTree.appendChild(createTreeListElement(item, res));
     });
   });
   panel_toggle();
@@ -150,7 +150,7 @@ function tree_manual_water(evt, treeName){
         button: "Done!",
       });
     } else {
-      console.log(res);
+      // console.log(res);
       swal({
         title: "Error!",
         text: res.data.msg,
@@ -202,7 +202,7 @@ function getFullyReport(evt, treeName){
       saveAs(pdfBlob, 'Report_' + treeName + '.pdf');
       panel_toggle();
     }).catch(error=>{
-      console.log(error.response);
+      // console.log(error.response);
     });
   });
 }

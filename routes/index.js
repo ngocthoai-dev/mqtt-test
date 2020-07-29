@@ -94,7 +94,7 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
     isDeleted: false,
   }).toArray(function(err, treeLst){
     if(err) console.log(err);
-    let trees = [], everyTreeWater="YES", lastWatering=new Date('01-01-2020');
+    let trees = {}, everyTreeWater="YES", lastWatering=new Date('01-01-2020');
     treeLst.forEach((tree) => {
       if(tree.water){
         lastWaterKey = Object.keys(tree.water)[Object.keys(tree.water).length - 1];
@@ -114,7 +114,7 @@ router.get(['/', '/home'], sessionChecker, function(req, res) {
       if(err) console.log(err);
 
       treeLst.forEach((tree) => {
-        trees.push(tree.name);
+        trees[tree.name] = tree.isDeleted;
       });
 
       res.render('../views/index', { data: trees, everyTreeWater: everyTreeWater, lastWatering: lastWatering });
@@ -156,9 +156,9 @@ router.post('/operation/filterTreeList', sessionChecker, function(req, res, next
   }).toArray(function(err, treeLst){
     if(err) throw err;
 
-    let trees = [];
+    let trees = {};
     treeLst.forEach((tree) => {
-      trees.push(tree.name);
+      trees[tree.name] = tree.isDeleted;
     });
     // console.log(trees);
     res.send(trees);
@@ -335,14 +335,14 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     if(err) throw err;
 
     let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false, isDeleted=false;
-    console.log(result);
+    // console.log(result);
     result.forEach((tree, i) => {
       temp = tree.currentData.temperature;
       mois = tree.currentData.moisture;
       humi = tree.currentData.humidity;
       tree.sensor.forEach((sensor, i)=>{
         Object.keys(sensor).forEach((key, i)=>{
-          if(key != "date"){  
+          if(key != "date"){
             sensors.push({
               [key]: sensor[key],
             });
@@ -368,12 +368,12 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
         }
       }
     });
-    console.log(sensors);
+    // console.log(sensors);
     // console.log(req.params.treeName, isWatering, lastWater);
     let clientIP = requestIp.getClientIp(req);
 
     let data = await dataInNex5Days(clientIP);
-    console.log(clientIP, data, dataInNex5Days(clientIP));
+    // console.log(clientIP, data, dataInNex5Days(clientIP));
 
     res.render('../views/tree', {
       tree: {
@@ -650,7 +650,7 @@ router.post('/deleteTree', sessionChecker, function(req, res){
         isDeleted: true,
       }).toArray(function(err, re) {
         if(err) console.log (err);
-        console.log(re, re.length);
+        // console.log(re, re.length);
         if(re.length){
           res.send({ success: false, msg: "Tree has been Deleted!" });
         }
@@ -662,7 +662,7 @@ router.post('/deleteTree', sessionChecker, function(req, res){
             $set: { isDeleted: true, },
           }, function(err, re) {
             if(err) throw err;
-            console.log('req');
+            // console.log('req');
             res.send({ success: true });
           });
         }
@@ -688,7 +688,7 @@ router.post('/addSensor', sessionChecker, function(req, res) {
       isDeleted: false,
     }).toArray((err, trees)=>{
       if(err) throw err;
-      
+
       // console.log(tempHumiName, moisName, motorName);
       if(tempHumiName != ''){
         sensor.push({
@@ -740,7 +740,7 @@ router.post('/addSensor', sessionChecker, function(req, res) {
         function(err, re){
           if(err) throw err;
 
-          console.log(re);
+          // console.log(re);
           res.send({ success: true, msg: 'update' });
         });
       } else {
@@ -797,7 +797,7 @@ router.post('/givePermission', sessionChecker, function(req, res){
       }, { upsert: true },
       function(err, re) {
         if(err) throw err;
-        console.log('req');
+        // console.log('req');
         res.send({ success: true });
       });
     }

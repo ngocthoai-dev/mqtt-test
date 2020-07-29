@@ -101,22 +101,16 @@ router.post('/', function(req, res) {
 			let repassword = req.body.data.repassword;
 
 			if(username.length === 0){
-        userLst[clientIP].loginCnt++;
 				res.send({ msg: 'username cannot be empty!', tagMsg: "username", success: false });
 			} else if(password.length === 0){
-        userLst[clientIP].loginCnt++;
 				res.send({ msg: 'password cannot be empty!', tagMsg: "password", success: false });
 			} else if(password.localeCompare(repassword)){
-        userLst[clientIP].loginCnt++;
 				res.send({ msg: 'password and re-type password dont match!', tagMsg: "repassword", success: false });
 			} else if(!/^([A-Za-z_]+[A-Za-z_0-9]{7,})$/.test(username)){
-        userLst[clientIP].loginCnt++;
 				res.send({ msg: 'username must be alphabet, _, or numeric and first character cant be numeric, also greater than 8!', tagMsg: "username", success: false });
 			} else if(!/^([A-Za-z_]+[a-z_0-9]{7,})$/.test(password)){
-        userLst[clientIP].loginCnt++;
 				res.send({ msg: 'password must be alphabet, _, or numeric and first character cant be numeric, also greater than 8!', tagMsg: "password", success: false });
 			} else if(user != undefined){
-        userLst[clientIP].loginCnt++;
 				res.send({ msg: 'user existed!', tagMsg: "username", success: false });
 			} else {
 				db().collection('user').insertOne({ username: username, password: hashing.hash(password, {salt: username, rounds: 20}) }, (err)=>{

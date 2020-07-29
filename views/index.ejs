@@ -14,9 +14,11 @@
 			<div class='plant-list'>
 				<div class='list-tree-container'>
 					<ul class="list-group list-tree">
-						<% data.forEach((treeName)=>{ %>
+						<% Object.keys(data).forEach((treeName, i)=>{ %>
 							<li class='list-group-item border-0 p-1'>
-								<a href=<%= '/tree/' + treeName %>><button type="button" class="btn btn-success tree-elems w-100" title='get info of tree'><%= treeName %></button></a>
+								<a href=<%= '/tree/' + treeName %>>
+									<button type="button" class='<%= "btn " + (data[treeName] ? "btn-secondary" : "btn-success") + " tree-elems w-100" %>' title='get info of tree'><%= treeName %></button>
+								</a>
 							</li>
 						<% }) %>
 					</ul>
