@@ -21,7 +21,7 @@ module.exports = {
       const hashedRawPassword = this.hash(rawPassword, { salt, rounds });
       return hashedPassword === hashedRawPassword;
     } catch (error) {
-      throw Error(error.message);
+      console.log(error);
     }
   },
 

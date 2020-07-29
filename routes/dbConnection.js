@@ -11,13 +11,13 @@ let initDbConection = function(callback){
   };
 
   MongoClient.connect(uri, mongoOptions, function(err, client) {
-    if(err) throw err;
+    if(err) console.log(err);
     _db = client.db('dbMqttTest');
     callback();
   });
 };
 
-let db = function(){ 
+let db = function(){
   return _db;
 };
 

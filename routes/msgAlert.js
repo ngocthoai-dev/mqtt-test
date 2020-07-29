@@ -8,8 +8,8 @@ const transporter = nodemailer.createTransport({
     user: 'guest121019@gmail.com',
     clientId: '490570341278-6lobi6mjkok82li9gd4fran7f31m9rjd.apps.googleusercontent.com',
     clientSecret: 't1sxhDBkE_SF9ztil7A7Tuq5',
-    refreshToken: '1//046tYAusmP_amCgYIARAAGAQSNwF-L9Ir8WS80p1ITDKISHYFlo9m_Y_gFNxwUaOSYOKmYu-KKuWG3NTwt1cW0_B-fJjhkWFdVTE',
-    accessToken: 'ya29.a0AfH6SMBVD5Ls4O0nHgHF4TNiaQrn_PxUHUKZN8MV2SpMDkfInvYU_Mw1blTbtz5zSUl0b8HO7FE-9tnIMDKjZR4EYTEWiWhgUl38mYYn1mMozUxp1HTcOBXwTTM2xqIsrp2trnSNB7MzQ0KVqq-x9KONDZaXi00HCxs',
+    refreshToken: '1//04dIQU0yaYqV_CgYIARAAGAQSNwF-L9Ir0__4xgMO5iOf4t0BWa4eoChg0ceolzK4GdhHg4blN4HQcx752tx0chTyncH6kDrQH7o',
+    accessToken: 'ya29.a0AfH6SMArtuH6U2z853wjWwjcBzSmkfEHHo-WFdEfWWUdTLI7JEuFU5nuHSBBn3LcULAeZoiyUsLdmq2bCbW7gN75kzn49684kgJM27awHKsxMG-OVTEfLHWaVOg1e6Vd1CC7Um6Fcwnoiha8ck4ghyEQAoBN41dWivA',
   }
 });
 
@@ -37,7 +37,7 @@ let checkInDangerTree = ()=>{
     db().collection('tree').find({
 
     }).toArray((err, trees)=>{
-      if(err) throw err;
+      if(err) console.log(err);
 
       trees.forEach((tree, i) => {
         let temp, mois, humi, today=new Date();
@@ -53,7 +53,7 @@ let checkInDangerTree = ()=>{
             db().collection('user').findOne({
               username: user.split('$')[0],
             }, (err, user)=>{
-              if(err) throw err;
+              if(err) console.log(err);
 
               if(user.email){
                 sendMsg('guest121019@gmail.com', user.email, function(msg){

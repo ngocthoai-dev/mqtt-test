@@ -65,7 +65,7 @@ router.post('/', function(req, res) {
 	console.log('post login:', req.url);
   // console.log(username, password);
 	db().collection('user').find({ username: username }).toArray(function(err, user) {
-		if(err) throw err;
+		if(err) console.log(err);
 
 		user = user[0];
 		// console.log(user);
@@ -114,7 +114,7 @@ router.post('/', function(req, res) {
 				res.send({ msg: 'user existed!', tagMsg: "username", success: false });
 			} else {
 				db().collection('user').insertOne({ username: username, password: hashing.hash(password, {salt: username, rounds: 20}) }, (err)=>{
-					if(err) throw err;
+					if(err) console.log(err);
 			    let options = {
 		        maxAge: 1000 * 60 * 60 * 24, // expire after 1 day
 		        httpOnly: true, // The cookie only accessible by the web server

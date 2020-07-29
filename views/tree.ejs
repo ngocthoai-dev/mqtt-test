@@ -39,9 +39,10 @@
         <div class='action-title my-3'>
           <h4 class='text-success'>Manual and Permission</h4>
         </div>
-				<button onClick="panel_toggle(1)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='give availability to other'>Give<br/>Permission</button>
-				<button onClick="panel_toggle()" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='watering'>Manual<br/>Watering</button>
-				<button onClick="panel_toggle(2)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3' align='center' title='watering'>Delete<br/>Tree</button>
+				<button onClick="panel_toggle(3)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3 mb-3' align='center' title='watering'>Message<br/>Others</button>
+				<button onClick="panel_toggle(1)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3 mb-3' align='center' title='give availability to other'>Give<br/>Permission</button>
+				<button onClick="panel_toggle()" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3 mb-3' align='center' title='watering'>Manual<br/>Watering</button>
+				<button onClick="panel_toggle(2)" type="button" name="manualToggle" class='btn btn-success manual-toggle p-3 mb-3' align='center' title='watering'>Delete<br/>Tree</button>
 			</div>
 		</div>
 
@@ -198,6 +199,29 @@
 			  </form>
 			</div>
 			<div class="fixed-top outside-filter" onClick="panel_toggle(2)"></div>
+		</div>
+
+		<div class="filter-panel fixed-top d-flex justify-content-center align-items-center">
+			<div class="card">
+			  <form class="card-body filter-form" method='post' onsubmit='<%= 'messageOthers(event, "' + tree.name + '")' %>'>
+					<div class="w-100 d-flex justify-content-between align-items-center mb-3">
+						<h3 class='m-0 text-success'>Message Others</h3>
+						<button onClick="panel_toggle(3)" type="button" name="CloseFilterPanel" class="btn btn-warning close-filter"><i class="far fa-times-circle"></i></button>
+					</div>
+					<span class='text-success'>Message Content</span>
+					<div class="add-content my-3">
+						<textarea type="password" name="" value="" class='p-2 rounded w-100' placeholder="content"></textarea>
+					</div>
+					<span class='text-success'>Enter your password</span>
+					<div class="add-password my-3">
+						<input type="password" name="" value="" class='p-2 rounded w-100' placeholder="password">
+					</div>
+					<div class="filter-submit w-100 pt-3" align='center'>
+						<button type="submit" name="FilterButton" class="btn btn-success filter-button"><i class="fas fa-id-card text-white"></i></button>
+					</div>
+			  </form>
+			</div>
+			<div class="fixed-top outside-filter" onClick="panel_toggle(3)"></div>
 		</div>
 	</div>
 

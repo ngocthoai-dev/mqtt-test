@@ -31,7 +31,7 @@ var sessionChecker = (req, res, next) => {
 
 const mqtt = require('mqtt');
 let mqttClient = mqtt.connect('mqtt:52.163.220.103:1883');
-var msgAlert = require('../routes/msgAlert').checkInDangerTree;
+var msgAlert = require('../routes/msgAlert');
 
 // mqttClient.on('connect', function() {
 //   mqttClient.subscribe('water', function(err, granted) {
@@ -154,7 +154,7 @@ router.post('/operation/filterTreeList', sessionChecker, function(req, res, next
     'currentData.humidity': { "$gte": parseInt(humidityMinValue), "$lte": parseInt(humidityMaxValue) },
     user: req.signedCookies['secid'],
   }).toArray(function(err, treeLst){
-    if(err) throw err;
+    if(err) console.log(err);
 
     let trees = {};
     treeLst.forEach((tree) => {
@@ -173,7 +173,7 @@ router.post('/generate-report', sessionChecker, function(req, res){
     user: req.signedCookies['secid'],
     name: req.body.tree.name,
   }).toArray(function(err, tree){
-    if(err) throw err;
+    if(err) console.log(err);
 
     // let data = {
     //   date: {
@@ -288,7 +288,7 @@ router.post('/tree/refresh', sessionChecker, function(req, res){
     name: req.body.treeName,
     user: req.signedCookies['secid'],
   }).toArray(function(err, result){
-    if(err) throw err;
+    if(err) console.log(err);
 
     let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false;
     result.forEach((tree, i) => {
@@ -332,7 +332,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     name: treeName,
     user: req.signedCookies['secid'],
   }).toArray(async function(err, result){
-    if(err) throw err;
+    if(err) console.log(err);
 
     let temp=0, mois=0, humi=0, isWaterToday="NO", lastWater='None', sensors=[], isWatering=false, isDeleted=false;
     // console.log(result);
@@ -408,7 +408,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
       user: req.signedCookies['secid'],
       name: treeName,
     }).toArray((err, tree)=>{
-      if(err) throw err;
+      if(err) console.log(err);
 
       if(tree.length === 0){
         res.send({ data: { success: false, msg: "no tree found!"} });
@@ -429,7 +429,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
         },
         { upsert: true, },
         function(err, re){
-          if(err) throw err;
+          if(err) console.log(err);
 
           res.send({ data: { success: true, msg: "schedule" } });
         });
@@ -449,7 +449,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
         user: req.signedCookies['secid'],
         name: treeName,
       }).toArray((err, trees)=>{
-        if(err) throw err;
+        if(err) console.log(err);
 
         console.log('water man');
         if(trees.length === 0){
@@ -469,7 +469,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
               $set: { isWatering: false, 'motor.value': ["0", "0"] },
             }, { upsert: true, },
             function(err, result){
-              if(err) throw err;
+              if(err) console.log(err);
 
               // console.log(result);
               let data = [];
@@ -490,7 +490,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
             },
             { upsert: true, },
             function(err, re){
-              if(err) throw err;
+              if(err) console.log(err);
 
               setTimeout(()=>{
                 // stop watering after flow sec
@@ -501,7 +501,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
                   $set: { isWatering: false, 'motor.value': ["0", "0"] },
                 }, { upsert: true, },
                 function(err, result){
-                  if(err) throw err;
+                  if(err) console.log(err);
 
                   let data = [];
                   data.push({
@@ -531,7 +531,7 @@ router.post('/tree/:treeName', sessionChecker, function(req, res) {
                 $set: { 'motor.value': ["1", value] },
               }, { upsert: true, },
               function(err, result){
-                if(err) throw err;
+                if(err) console.log(err);
 
                 let data = [];
                 data.push({
@@ -564,7 +564,7 @@ router.get('/report/:treeName', sessionChecker, function(req, res){
       date: { $lte: now }
     } }
   }).toArray(function(err, result){
-    if(err) throw err;
+    if(err) console.log(err);
     let data = [];
     if(result.length > 0){
       let cnt = 0;
@@ -622,7 +622,7 @@ router.get('/addSensor', sessionChecker, function(req, res){
     isDeleted: false,
   }).toArray(function(err, treeLst){
 
-    if(err) throw err;
+    if(err) console.log(err);
     console.log('req add sensor:', req.url);
     let trees = [];
     treeLst.forEach((tree) => {
@@ -634,14 +634,14 @@ router.get('/addSensor', sessionChecker, function(req, res){
 });
 
 router.post('/deleteTree', sessionChecker, function(req, res){
-  let treeName = req.body.treeName, user=req.body.user;
+  let treeName = req.body.treeName;
   let username = req.signedCookies['secid'].split('$')[0];
   let hashPass = hashing.hash(req.body.pass, { salt: username, rounds: 20 });
   db().collection('user').find({
     username: username,
     password: hashPass,
   }).toArray((err, users) => {
-    if(err) throw err;
+    if(err) console.log(err);
 
     if(users.length){
       db().collection('tree').find({
@@ -661,11 +661,51 @@ router.post('/deleteTree', sessionChecker, function(req, res){
           }, {
             $set: { isDeleted: true, },
           }, function(err, re) {
-            if(err) throw err;
+            if(err) console.log(err);
             // console.log('req');
             res.send({ success: true });
           });
         }
+      });
+    } else {
+      res.send({ success: false, msg: "incorrect password!" });
+    }
+  })
+});
+
+router.post('/messageOthers', sessionChecker, function(req, res){
+  var treeName = req.body.treeName, msg=req.body.content;
+  let username = req.signedCookies['secid'].split('$')[0];
+  console.log(username, 'send msg');
+  let hashPass = hashing.hash(req.body.pass, { salt: username, rounds: 20 });
+  db().collection('user').find({
+    username: username,
+    password: hashPass,
+  }).toArray((err, users) => {
+    if(err) console.log(err);
+
+    if(users.length){
+      db().collection('tree').find({
+        user: req.signedCookies['secid'],
+        name: treeName,
+      }).toArray(function(err, res) {
+        if(err) console.log (err);
+        // console.log(re, re.length);
+        res[0].user.forEach((user, i) => {
+          db().collection('user').findOne({
+            username: user.split('$')[0],
+          }, (err, user)=>{
+            if(err) console.log(err);
+
+            if(user.email){
+              msgAlert.sendMsg('sad361975@gmail.com', user.email, function(msg){
+                console.log(msg);
+              }, 'RE: Message from ' + username + '!',
+              ('Dear ' + user.username + ',<br/><br/>' + msg + '!<br/><br/>' +
+              'Thanks for your time,<br/>Sincerely,<br/>' + username + '.'));
+            }
+          });
+        });
       });
     } else {
       res.send({ success: false, msg: "incorrect password!" });
@@ -687,7 +727,7 @@ router.post('/addSensor', sessionChecker, function(req, res) {
       name: treeName,
       isDeleted: false,
     }).toArray((err, trees)=>{
-      if(err) throw err;
+      if(err) console.log(err);
 
       // console.log(tempHumiName, moisName, motorName);
       if(tempHumiName != ''){
@@ -738,7 +778,7 @@ router.post('/addSensor', sessionChecker, function(req, res) {
           },
         }, { upsert: true },
         function(err, re){
-          if(err) throw err;
+          if(err) console.log(err);
 
           // console.log(re);
           res.send({ success: true, msg: 'update' });
@@ -766,7 +806,7 @@ router.post('/addSensor', sessionChecker, function(req, res) {
           }
         }, { upsert: true },
         function(err, re){
-          if(err) throw err;
+          if(err) console.log(err);
 
           // console.log(re);
           res.send({ success: true, msg: 'add' });
@@ -783,7 +823,7 @@ router.post('/givePermission', sessionChecker, function(req, res){
   db().collection('user').find({
     username: user,
   }).toArray((err, users)=>{
-    if(err) throw err;
+    if(err) console.log(err);
 
     if(users.length == 0){
       res.send({ success: false, msg: 'no user: ' + user + ' found!', });
@@ -796,7 +836,7 @@ router.post('/givePermission', sessionChecker, function(req, res){
         },
       }, { upsert: true },
       function(err, re) {
-        if(err) throw err;
+        if(err) console.log(err);
         // console.log('req');
         res.send({ success: true });
       });
@@ -819,7 +859,7 @@ router.post('/addEmail', sessionChecker, function(req, res){
       }
     }, {},
     function(err, re){
-      if(err) throw err;
+      if(err) console.log(err);
 
       res.send({ success: true });
     });
@@ -830,7 +870,7 @@ router.post('/addEmail', sessionChecker, function(req, res){
 
 router.get('/logout', sessionChecker, function(req, res){
   req.session.destroy(err=>{
-    if(err) throw err;
+    if(err) console.log(err);
 
     res.clearCookie('secid');
     res.clearCookie('sec');

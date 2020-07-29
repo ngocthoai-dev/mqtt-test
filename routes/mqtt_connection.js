@@ -8,13 +8,15 @@ mqttClient.on('connect', function() {
   console.log('mqtt connect!');
 });
 
+var coolDownMsg = {};
+
 function mqttConnection(){
   // mqtt connection
   function connection(){
     db().collection('tree').find({
 
     }).toArray((err, trees)=>{
-      if(err) throw err;
+      if(err) console.log(err);
 
       trees.forEach((tree, i) => {
         if(tree.sensor.length > 0){
@@ -22,7 +24,7 @@ function mqttConnection(){
             Object.keys(sensor).forEach((sensorTopic, i) => {
               if(['TempHumi', 'Moisture'].includes(sensorTopic)){
                 mqttClient.subscribe(sensor[sensorTopic], function(err, granted) {
-                  console.log('mqtt connect: ' + sensor[sensorTopic]);
+                  // console.log('mqtt connect: ' + sensor[sensorTopic]);
                   if (!err) {
                     // console.log(granted);
                   }
@@ -33,7 +35,7 @@ function mqttConnection(){
         }
         if(tree.motor.name){
           mqttClient.subscribe(tree.motor.name, function(err, granted){
-            console.log('mqtt connect: ' + tree.motor.name);
+            // console.log('mqtt connect: ' + tree.motor.name);
             if(!err){
 
             }
@@ -95,7 +97,7 @@ function mqttConnection(){
             },
           }, { upsert: true },
           function(err, re){
-            if(err) throw err;
+            if(err) console.log(err);
 
             if(valueTemp > 40 || valueTemp < -20 || valueHumi > 100 || valueHumi < 0){
               db().collection('tree').find({
@@ -106,15 +108,20 @@ function mqttConnection(){
                     db().collection('user').findOne({
                       username: user.split('$')[0],
                     }, (err, user)=>{
-                      if(err) throw err;
+                      if(err) console.log(err);
 
-                      if(user.email){
+                      if(user.email && (!(tree.name in coolDownMsg) || coolDownMsg[tree.name])){
                         sendMsg('guest121019@gmail.com', user.email, function(msg){
                           // console.log(msg);
                         }, 'WARNING: ' + tree.name + '!',
                         ('Dear ' + user.username + ',<br/><br/>' +
-                        'the ' + tree.name + ' tree with the temperature: <b>' + valueTemp + '</b>;' + 'the humidity: <b>' + valueHumi + '</b>;<br/><br/>' +
+                        'the ' + tree.name + ' tree with the temperature: <b>' + valueTemp + '</b>;' + 'the humidity: <b>' + valueHumi +
+                        '</b>; the moisture: <b>' + tree.currentData.moisture + '</b><br/><br/>' +
                         'Thanks for using our app,<br/>Sincerely,<br/>mqtt-test.'));
+                        coolDownMsg[tree.name] = 0;
+                        setTimeout(()=>{
+                          coolDownMsg[tree.name] = 1;
+                        }, 1000 * 60 * 5);
                       }
                     });
                   });
@@ -143,7 +150,7 @@ function mqttConnection(){
             },
           }, { upsert: true },
           function(err, re){
-            if(err) throw err;
+            if(err) console.log(err);
 
             if(valueMois > 50 || valueMois < -20){
               db().collection('tree').find({
@@ -154,15 +161,20 @@ function mqttConnection(){
                     db().collection('user').findOne({
                       username: user.split('$')[0],
                     }, (err, user)=>{
-                      if(err) throw err;
+                      if(err) console.log(err);
 
-                      if(user.email){
+                      if(user.email && (!(tree.name in coolDownMsg) || coolDownMsg[tree.name])){
                         sendMsg('guest121019@gmail.com', user.email, function(msg){
                           // console.log(msg);
                         }, 'WARNING: ' + tree.name + '!',
                         ('Dear ' + user.username + ',<br/><br/>' +
-                        'the ' + tree.name + ' tree with the moisture: <b>' + valueMois + '</b>;<br/><br/>' +
+                        'the ' + tree.name + ' tree with the moisture: <b>' + valueMois + '</b>; the temperature: <b>' + tree.currentData.temperature + '</b>;' +
+                        'the humidity: <b>' + tree.currentData.humidity + '</b>;<br/><br/>' +
                         'Thanks for using our app,<br/>Sincerely,<br/>mqtt-test.'));
+                        coolDownMsg[tree.name] = 0;
+                        setTimeout(()=>{
+                          coolDownMsg[tree.name] = 1;
+                        }, 1000 * 60 * 5);
                       }
                     });
                   });
@@ -183,7 +195,7 @@ function mqttConnection(){
             },
           }, { upsert: true },
           function(err, re){
-            if(err) throw err;
+            if(err) console.log(err);
           });
         }
       });

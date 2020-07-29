@@ -16,7 +16,7 @@ const { PythonShell } = require('python-shell');
 function prediction(callback, ip=undefined) {
   // let options = {
   //   mode: 'text',
-  //   pythonPath: 'python33',
+  //   pythonPath: 'python3',
   //   // pythonOptions: ['u'],
   //   // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
   //   args: ['train']
@@ -91,7 +91,7 @@ function prediction(callback, ip=undefined) {
 
                   let options = {
                     mode: 'text',
-                    pythonPath: 'python3',
+                    pythonPath: 'python',
                     // pythonOptions: ['u'],
                     // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
                     args: ['eval', data5Days[key].temp, data5Days[key].humi]

@@ -284,3 +284,32 @@ function deleteTree(evt, treeName){
     }
   });
 }
+
+function messageOthers(evt, treeName){
+  evt.preventDefault();
+  let user = document.getElementsByClassName('add-password')[1].firstElementChild.value;
+  let content = document.getElementsByClassName('add-content')[0].firstElementChild.value;
+  console.log(content, user);
+  axios.post('/messageOthers', {
+    treeName: treeName,
+    pass: user,
+    content: content,
+  }).then((res)=>{
+    // console.log(res.data.success);
+    if(res.data.success){
+			swal({
+				title: "Updated!",
+				text: "You have deleted tree " + treeName,
+				icon: "success",
+				button: "Done!",
+			});
+    } else {
+			swal({
+				title: res.data.msg,
+				text: res.msg,
+				icon: "warning",
+				button: "OK!",
+			});
+    }
+  });
+}

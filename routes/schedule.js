@@ -24,7 +24,7 @@ function wateringSchedule(schedule, treeName, users, level) {
     $set: { isWatering: true, },
   }, { upsert: true, },
   function(err, res){
-    if(err) throw err;
+    if(err) console.log(err);
     // console.log(res);
     let data = [], value="0", flow=res.value.schedule.level;
     var motor=res.value.motor.name;
@@ -47,7 +47,7 @@ function wateringSchedule(schedule, treeName, users, level) {
       db().collection('tree').find({
         name: treeName,
       }).toArray((err, trees)=>{
-        if(err) throw err;
+        if(err) console.log(err);
 
         trees.forEach((tree, i) => {
           if(tree.isWatering == true){
@@ -57,7 +57,7 @@ function wateringSchedule(schedule, treeName, users, level) {
             }, {
               $set: { isWatering: false, 'motor.value': ["0", "0"], },
             }, function(err, res){
-              if(err) throw err;
+              if(err) console.log(err);
               // console.log(res);
 
               let data = [];
@@ -72,14 +72,14 @@ function wateringSchedule(schedule, treeName, users, level) {
         });
       });
     }, 1000*level);
-    
+
     db().collection('tree').findOneAndUpdate({
       name: treeName,
     }, {
       $set: { 'motor.value': ["1", value] },
     }, { upsert: true, },
     function(err, result){
-      if(err) throw err;
+      if(err) console.log(err);
 
       let data = [];
       data.push({
@@ -103,14 +103,14 @@ let fetch_schedule_water = ()=>{
   let scheduleFunc = ()=>{
     db().collection('tree').find({
     }).toArray((err, trees)=>{
-      if(err) throw err;
+      if(err) console.log(err);
 
       trees.forEach((tree, i) => {
         if(Object.keys(tree.schedule).length < 3)
           return;
         if(tree.schedule && tree.schedule.frequency != 0){
           // check tree is watering or not water schedule before
-          if((treeInWater[tree.name] != undefined && treeInWater[tree.name].time.localeCompare(tree.schedule.time)) || treeInWater[tree.name] == undefined){            
+          if((treeInWater[tree.name] != undefined && treeInWater[tree.name].time.localeCompare(tree.schedule.time)) || treeInWater[tree.name] == undefined){
             // clear all stop and water time
             if(schedule_water_list[tree.name]){
               deleteScheduleList(tree.name);
