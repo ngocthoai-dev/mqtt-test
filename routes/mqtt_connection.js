@@ -111,7 +111,7 @@ function mqttConnection(){
                       if(err) console.log(err);
 
                       if(user.email && (!(tree.name in coolDownMsg) || coolDownMsg[tree.name])){
-                        sendMsg('guest121019@gmail.com', user.email, function(msg){
+                        sendMsg('p3bear123456789@gmail.com', user.email, function(msg){
                           // console.log(msg);
                         }, 'WARNING: ' + tree.name + '!',
                         ('Dear ' + user.username + ',<br/><br/>' +
@@ -164,7 +164,7 @@ function mqttConnection(){
                       if(err) console.log(err);
 
                       if(user.email && (!(tree.name in coolDownMsg) || coolDownMsg[tree.name])){
-                        sendMsg('guest121019@gmail.com', user.email, function(msg){
+                        sendMsg('p3bear123456789@gmail.com', user.email, function(msg){
                           // console.log(msg);
                         }, 'WARNING: ' + tree.name + '!',
                         ('Dear ' + user.username + ',<br/><br/>' +

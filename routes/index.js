@@ -53,7 +53,7 @@ let router = express.Router();
 
 router.get('/sendMsg', function(req, res){
   console.log('sendMsg');
-  msgAlert.sendMsg("guest121019@gmail.com", "tri.vo1999@hcmut.edu.vn", function(res){
+  msgAlert.sendMsg("p3bear123456789@gmail.com", "tri.vo1999@hcmut.edu.vn", function(res){
     console.log(res);
   });
 });
@@ -372,19 +372,19 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     // console.log(req.params.treeName, isWatering, lastWater);
     let clientIP = requestIp.getClientIp(req);
 
-    let data = await dataInNex5Days(clientIP);
-    // console.log(clientIP, data, dataInNex5Days(clientIP));
-
-    res.render('../views/tree', {
-      tree: {
-        name: treeName,
-        temperature: temp, moisture: mois, humidity: humi,
-        isWaterToday: isWaterToday, lastWater: lastWater,
-        sensors: sensors,
-        isWatering: isWatering,
-        isDeleted: isDeleted,
-        lvlPrediction: data,
-      },
+    dataInNex5Days(clientIP).then((result)=>{
+      // console.log(clientIP, result, dataInNex5Days(clientIP));
+      res.render('../views/tree', {
+        tree: {
+          name: treeName,
+          temperature: temp, moisture: mois, humidity: humi,
+          isWaterToday: isWaterToday, lastWater: lastWater,
+          sensors: sensors,
+          isWatering: isWatering,
+          isDeleted: isDeleted,
+          lvlPrediction: result,
+        },
+      });
     });
   });
 });

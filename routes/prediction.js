@@ -91,7 +91,7 @@ function prediction(callback, ip=undefined) {
 
                   let options = {
                     mode: 'text',
-                    pythonPath: 'python',
+                    pythonPath: 'python3',
                     // pythonOptions: ['u'],
                     // scriptPath: 'C:\\Users\\DELL\\AppData\\Local\\Programs\\Python\\Python37\\Scripts',
                     args: ['eval', data5Days[key].temp, data5Days[key].humi]
@@ -140,7 +140,7 @@ module.exports = { prediction, getDataInNext5Days: async (ip)=>{
     if(isServer !== undefined)
       resolve(isServer);
   });
-  console.log(isServer);
+  // console.log(isServer);
   let res = await promise;
   if(res)
     return dataInNex5Days;
