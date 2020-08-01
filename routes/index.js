@@ -371,9 +371,9 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     // console.log(sensors);
     // console.log(req.params.treeName, isWatering, lastWater);
     let clientIP = requestIp.getClientIp(req);
-
-    dataInNex5Days(clientIP).then((result)=>{
-      // console.log(clientIP, result, dataInNex5Days(clientIP));
+    // console.log(dataInNex5Days(clientIP));
+    dataInNex5Days(clientIP).then(function(result){
+      console.log(clientIP, result);
       res.render('../views/tree', {
         tree: {
           name: treeName,

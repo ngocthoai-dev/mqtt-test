@@ -2,12 +2,12 @@ var dataInNex5Days = {};
 var lstDataInNext5Days = {};
 var serverIP = '';
 
-const publicIp = require('public-ip');
+var publicIp = require("ip");
 (async function() {
-  serverIP = await publicIp.v4();
+  serverIP = await publicIp.address();
 })();
 
-function  getServerIP(){
+function getServerIP(){
   return serverIP;
 }
 
@@ -31,19 +31,19 @@ function prediction(callback, ip=undefined) {
   var next5days;
   var firstTime = true;
   async function crawlWeather(ip=undefined){
-    const publicIp = require('public-ip');
-    console.log(await publicIp.v4());
+    var publicIp = require("ip");
+    console.log(await publicIp.address(), getServerIP());
     //=> '46.5.21.123'
 
     let isServer = undefined;
     let promise = new Promise(async (resolve, reject) => {
-      isServer = (ip !== undefined || ip == '::1' || (getServerIP() == await publicIp.v4()));
+      isServer = (ip !== undefined || ip == '::1' || (getServerIP() == await publicIp.address()));
       if(isServer !== undefined)
-        resolve();
+        resolve(isServer);
     });
 
     promise.then(async ()=>{
-      let url = 'http://ip-api.com/json/' + (isServer ? await publicIp.v4() : ip);
+      let url = 'http://ip-api.com/json/' + (isServer ? await publicIp.address() : ip);
       console.log('location request:', url);
       request(await url, function(err, response, body){
         if(err) console.log(err);
@@ -122,6 +122,7 @@ function prediction(callback, ip=undefined) {
                 else {
                   console.log('repredict');
                 }
+                console.log(isServer, data5Days, dataInNex5Days);
               });
             }
           });
@@ -136,12 +137,12 @@ function prediction(callback, ip=undefined) {
 module.exports = { prediction, getDataInNext5Days: async (ip)=>{
   let isServer = undefined;
   let promise = new Promise(async (resolve, reject) => {
-    isServer = (ip !== undefined || ip == '::1' || (getServerIP() == await publicIp.v4()));
+    isServer = (ip !== undefined || ip == '::1' || (getServerIP() == await publicIp.address()));
     if(isServer !== undefined)
       resolve(isServer);
   });
-  // console.log(isServer);
   let res = await promise;
+  console.log(isServer, dataInNex5Days);
   if(res)
     return dataInNex5Days;
   else

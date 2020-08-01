@@ -5,7 +5,7 @@ var router = express.Router();
 const hashing = require('../routes/custom_hashing');
 
 const requestIp = require('request-ip');
-const publicIp = require('public-ip');
+const publicIp = require('ip');
 
 var userLst = {};
 
@@ -31,7 +31,7 @@ router.get('/', sessionChecker, async function(req, res, next) {
     userLst[clientIP] = {
       loginCnt: 0,
       timeOut: undefined,
-      ip: clientIP=='::1' ? await publicIp.v4() : clientIP,
+      ip: clientIP=='::1' ? await publicIp.address() : clientIP,
     };
   }
 
