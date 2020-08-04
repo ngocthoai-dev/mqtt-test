@@ -142,7 +142,7 @@ module.exports = { prediction, getDataInNext5Days: async (ip)=>{
       resolve(isServer);
   });
   let res = await promise;
-  console.log(isServer, dataInNex5Days);
+  // console.log(isServer, dataInNex5Days);
   if(res)
     return dataInNex5Days;
   else

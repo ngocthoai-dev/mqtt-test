@@ -349,9 +349,11 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
           }
         });
       });
-      sensors.push({
-        'motor': tree.motor.name,
-      });
+      if(tree.motor.name){
+        sensors.push({
+          'motor': tree.motor.name,
+        });
+      }
       isDeleted = tree.isDeleted;
       if(tree.motor.value){
         // console.log(tree.motor.value);
@@ -373,7 +375,7 @@ router.get('/tree/:treeName', sessionChecker, function(req, res) {
     let clientIP = requestIp.getClientIp(req);
     // console.log(dataInNex5Days(clientIP));
     dataInNex5Days(clientIP).then(function(result){
-      console.log(clientIP, result);
+      // console.log(clientIP, result);
       res.render('../views/tree', {
         tree: {
           name: treeName,

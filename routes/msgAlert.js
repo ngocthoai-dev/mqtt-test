@@ -40,14 +40,16 @@ let checkInDangerTree = ()=>{
       if(err) console.log(err);
 
       trees.forEach((tree, i) => {
-        let temp, mois, humi, today=new Date();
+        let temp=0, mois=0, humi=0, today=new Date();
         today.setDate(today.getDate()-1);
-        if(tree.currentData.temperature)
-          temp = tree.currentData.temperature;
-        if(tree.currentData.moisture)
-          mois = tree.currentData.moisture;
-        if(tree.currentData.humidity)
-          humi = tree.currentData.humidity;
+        if(tree.currentData){
+          if(tree.currentData.temperature)
+            temp = tree.currentData.temperature;
+          if(tree.currentData.moisture)
+            mois = tree.currentData.moisture;
+          if(tree.currentData.humidity)
+            humi = tree.currentData.humidity;
+        }
         if(temp > 40 || temp < -20 || humi > 100 || humi < 0 || mois > 50 || mois < -20){
           tree.user.forEach((user, i) => {
             db().collection('user').findOne({

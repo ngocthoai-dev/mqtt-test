@@ -2,7 +2,7 @@
 const db = require('../routes/dbConnection').db;
 
 const mqtt = require('mqtt');
-let mqttClient = mqtt.connect('mqtt:52.187.125.59:1883');
+let mqttClient = mqtt.connect('mqtt:52.163.220.103:1883');
 
 mqttClient.on('connect', function() {
   console.log('mqtt connect!');
@@ -19,21 +19,21 @@ function mqttConnection(){
       if(err) console.log(err);
 
       trees.forEach((tree, i) => {
+        if(!tree.sensor)
+          return;
         if(tree.sensor.length > 0){
           tree.sensor.forEach((sensor, i)=>{
             Object.keys(sensor).forEach((sensorTopic, i) => {
-              if(['TempHumi', 'Moisture'].includes(sensorTopic)){
-                mqttClient.subscribe(sensor[sensorTopic], function(err, granted) {
-                  // console.log('mqtt connect: ' + sensor[sensorTopic]);
-                  if (!err) {
-                    // console.log(granted);
-                  }
-                });
-              }
+              mqttClient.subscribe(sensor[sensorTopic], function(err, granted) {
+                // console.log('mqtt connect: ' + sensor[sensorTopic]);
+                if (!err) {
+                  // console.log(granted);
+                }
+              });
             });
           });
         }
-        if(tree.motor.name){
+        if(tree.motor && tree.motor.name){
           mqttClient.subscribe(tree.motor.name, function(err, granted){
             // console.log('mqtt connect: ' + tree.motor.name);
             if(!err){
@@ -73,11 +73,15 @@ function mqttConnection(){
       infoList.forEach((item, i) =>{
         if(item.device_id.includes('TempHumi')){
           // console.log('go');
-          let sensorTempHumi='sensor.TempHumi', currentDataTemp='currentData.temperature', currentDataHumi='currentData.humidity';
+          let sensorTempHumi='sensor.tempHumi', currentDataTemp='currentData.temperature', currentDataHumi='currentData.humidity';
           let valueTemp=parseInt(item.values[0]), valueHumi=parseInt(item.values[1]);
 
           db().collection('tree').updateMany({
-            [sensorTempHumi]: topic,
+            sensor: {
+              $elemMatch: {
+                tempHumi: topic,
+              }
+            }
           }, {
             $push: {
               data: {
@@ -130,11 +134,15 @@ function mqttConnection(){
             }
           });
         } else if(item.device_id.includes('Mois')){
-          let sensorMois='sensor.Moisture', currentDataMois='currentData.moisture';
+          let sensorMois='sensor.moisture', currentDataMois='currentData.moisture';
           let valueMois=parseFloat(item.values[0]);
 
           db().collection('tree').updateMany({
-            [sensorMois]: topic,
+            sensor: {
+              $elemMatch: {
+                moisture: topic,
+              }
+            }
           }, {
             $push: {
               data: {
