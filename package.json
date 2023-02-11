@@ -26,7 +26,7 @@
     "mqtt": "^4.1.0",
     "nodemailer": "^6.6.1",
     "openweather-apis": "^4.3.1",
-    "public-ip": "^4.0.1",
+    "public-ip": "^6.0.1",
     "python-shell": "^2.0.1",
     "request": "^2.88.2",
     "request-ip": "^2.1.3",
